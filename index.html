@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GovCon Command Center - Win More Government Contracts on Autopilot</title>
+    <meta name="description" content="7 AI-powered automations that monitor SAM.gov opportunities, track RFP deadlines, and deliver intelligence so you never miss a bid.">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        .hero { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 100px 20px 120px; text-align: center; position: relative; overflow: hidden; }
+        .hero h1 { font-size: 3.5rem; font-weight: 700; margin-bottom: 20px; line-height: 1.2; }
+        .hero p { font-size: 1.5rem; margin-bottom: 40px; opacity: 0.95; max-width: 800px; margin-left: auto; margin-right: auto; }
+        .cta-button { display: inline-block; background: #fbbf24; color: #1e3a8a; padding: 18px 40px; font-size: 1.2rem; font-weight: 600; text-decoration: none; border-radius: 8px; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); }
+
+        .problem-solution { padding: 80px 20px; background: #f9fafb; }
+        .problem-solution h2 { text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #1e3a8a; }
+        .problems { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .problem-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; }
+        .problem-card:hover { transform: translateY(-5px); }
+        .problem-card.stop { border-top: 4px solid #ef4444; }
+        .problem-card.start { border-top: 4px solid #10b981; }
+        .problem-card h3 { font-size: 1.5rem; margin-bottom: 15px; color: #1f2937; }
+        .problem-card p { font-size: 1.1rem; color: #6b7280; }
+
+        .features { padding: 80px 20px; background: white; }
+        .features h2 { text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #1e3a8a; }
+        .features-subtitle { text-align: center; font-size: 1.2rem; color: #6b7280; margin-bottom: 60px; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
+        .feature-card { padding: 35px; border: 2px solid #e5e7eb; border-radius: 12px; transition: all 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-color: #3b82f6; }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
+        .feature-card h3 { font-size: 1.3rem; margin-bottom: 10px; color: #1f2937; }
+        .feature-card p { color: #6b7280; line-height: 1.6; }
+
+        .pricing { padding: 80px 20px; background: #f9fafb; }
+        .pricing h2 { text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #1e3a8a; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto; }
+        .pricing-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; border: 2px solid #e5e7eb; position: relative; }
+        .pricing-card.featured { border-color: #3b82f6; transform: scale(1.05); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
+        .pricing-card.featured::before { content: 'MOST POPULAR'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #3b82f6; color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .pricing-card:hover { transform: scale(1.05); }
+        .pricing-card h3 { font-size: 1.8rem; margin-bottom: 10px; color: #1f2937; }
+        .price { font-size: 3rem; font-weight: 700; color: #1e3a8a; margin: 20px 0; }
+        .price span { font-size: 1.2rem; color: #6b7280; font-weight: 400; }
+        .trial-badge { background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; display: inline-block; margin-bottom: 20px; }
+        .features-list { list-style: none; margin: 30px 0; text-align: left; }
+        .features-list li { padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #4b5563; }
+        .features-list li:last-child { border-bottom: none; }
+        .features-list li::before { content: '✓'; color: #10b981; font-weight: bold; margin-right: 10px; }
+        .buy-button { display: block; width: 100%; background: #3b82f6; color: white; padding: 15px; font-size: 1.1rem; font-weight: 600; text-decoration: none; border-radius: 8px; margin-top: 20px; transition: background 0.3s; }
+        .buy-button:hover { background: #2563eb; }
+
+        .social-proof { padding: 80px 20px; background: white; text-align: center; }
+        .social-proof h2 { font-size: 2.5rem; margin-bottom: 40px; color: #1e3a8a; }
+        .trust-badge { font-size: 1.3rem; color: #6b7280; margin-bottom: 40px; }
+        .badges { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 40px; }
+        .badge { padding: 15px 30px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-weight: 500; }
+
+        .faq { padding: 80px 20px; background: #f9fafb; }
+        .faq h2 { text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #1e3a8a; }
+        .faq-grid { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: white; padding: 30px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .faq-item:hover { transform: translateX(5px); }
+        .faq-item h3 { font-size: 1.3rem; margin-bottom: 15px; color: #1f2937; }
+        .faq-item p { color: #6b7280; line-height: 1.8; }
+
+        footer { background: #1f2937; color: white; padding: 60px 20px 30px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
+        .footer-section h4 { font-size: 1.2rem; margin-bottom: 20px; }
+        .footer-section p { color: #9ca3af; margin-bottom: 15px; }
+        .footer-section a { display: block; color: #9ca3af; text-decoration: none; margin-bottom: 10px; transition: color 0.3s; }
+        .footer-section a:hover { color: white; }
+        .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid #374151; color: #9ca3af; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.2rem; }
+            .pricing-card.featured { transform: scale(1); }
+            .features-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="hero-content">
+            <div class="container">
+                <h1>Win More Government Contracts<br>on Autopilot</h1>
+                <p>7 AI-powered automations that monitor opportunities, track deadlines,<br>and deliver intelligence—so you never miss a bid</p>
+                <a href="#pricing" class="cta-button">Start 14-Day Free Trial →</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="problem-solution">
+        <div class="container">
+            <h2>Stop Losing. Start Winning.</h2>
+            <div class="problems">
+                <div class="problem-card stop">
+                    <h3>❌ Stop Losing Contracts</h3>
+                    <p>Because you missed the RFP deadline while buried in manual research</p>
+                </div>
+                <div class="problem-card stop">
+                    <h3>⏰ Stop Wasting 20+ Hours/Week</h3>
+                    <p>On manual SAM.gov searches and spreadsheet tracking</p>
+                </div>
+                <div class="problem-card start">
+                    <h3>✅ Start Winning with AI</h3>
+                    <p>Automated intelligence that works 24/7 so you can focus on winning bids</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>7 Powerful Automations</h2>
+            <p class="features-subtitle">Everything you need to dominate government contracting</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">📊</span>
+                    <h3>Daily SAM.gov Monitoring</h3>
+                    <p>Automatic scans of new opportunities matching your NAICS codes and keywords</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📧</span>
+                    <h3>Email Intelligence Briefings</h3>
+                    <p>Daily digest of relevant opportunities delivered to your inbox each morning</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🎯</span>
+                    <h3>RFP Deadline Tracking</h3>
+                    <p>Never miss a deadline with smart alerts and countdown timers</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📈</span>
+                    <h3>Contract Award Analysis</h3>
+                    <p>See who's winning contracts in your space and learn from their success</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🔍</span>
+                    <h3>Competitor Intelligence</h3>
+                    <p>Track your competitors' contract wins and spot market trends</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">📋</span>
+                    <h3>Compliance Tracking</h3>
+                    <p>Stay updated on changing compliance requirements and certifications</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💼</span>
+                    <h3>Proposal Management</h3>
+                    <p>Organize your active bids and track proposal deadlines in one place</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <h2>Simple, Transparent Pricing</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Starter</h3>
+                    <div class="trial-badge">14-Day Free Trial</div>
+                    <div class="price">$97<span>/month</span></div>
+                    <ul class="features-list">
+                        <li>3 automations active</li>
+                        <li>Daily email reports</li>
+                        <li>SAM.gov monitoring</li>
+                        <li>Deadline alerts</li>
+                        <li>Email support</li>
+                    </ul>
+                    <a href="https://buy.stripe.com/4gM9AUgrO25IdiHd4138403" class="buy-button">Start Free Trial</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <h3>Professional</h3>
+                    <div class="trial-badge">14-Day Free Trial</div>
+                    <div class="price">$197<span>/month</span></div>
+                    <ul class="features-list">
+                        <li>All 7 automations</li>
+                        <li>Real-time alerts</li>
+                        <li>Contract analysis</li>
+                        <li>Competitor tracking</li>
+                        <li>Priority support</li>
+                        <li>Custom keywords</li>
+                    </ul>
+                    <a href="https://buy.stripe.com/dRm4gAcbyeSufqP3tr38404" class="buy-button">Start Free Trial</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>Enterprise</h3>
+                    <div class="trial-badge">14-Day Free Trial</div>
+                    <div class="price">$397<span>/month</span></div>
+                    <ul class="features-list">
+                        <li>Everything in Pro</li>
+                        <li>Custom automations</li>
+                        <li>Dedicated support</li>
+                        <li>Team collaboration</li>
+                        <li>API access</li>
+                        <li>White-glove onboarding</li>
+                    </ul>
+                    <a href="https://buy.stripe.com/7sYeVe2AY9yaceD6FD38405" class="buy-button">Start Free Trial</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="social-proof">
+        <div class="container">
+            <h2>Trusted by Government Contractors</h2>
+            <p class="trust-badge">🏆 Trusted by 50+ GovCon Teams Nationwide</p>
+            <div class="badges">
+                <div class="badge">✓ SAM.gov Integration Partner</div>
+                <div class="badge">✓ Secure & Compliant</div>
+                <div class="badge">✓ 14-Day Money-Back Guarantee</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="faq">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>What happens after the free trial?</h3>
+                    <p>Your 14-day trial is completely free. After the trial, your subscription automatically begins at your chosen plan rate. You can cancel anytime during or after the trial with no penalties.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Can I cancel anytime?</h3>
+                    <p>Absolutely! You can cancel your subscription at any time from your account dashboard. No contracts, no cancellation fees. Your access continues until the end of your current billing period.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Do you integrate with SAM.gov?</h3>
+                    <p>Yes! Our platform directly integrates with SAM.gov's API to pull real-time opportunity data. We monitor new postings, track modifications, and alert you to relevant opportunities automatically.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What kind of support do you offer?</h3>
+                    <p>All plans include email support with 24-hour response time. Professional and Enterprise plans get priority support with faster response times, and Enterprise includes dedicated account management.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>GovCon Command Center</h4>
+                    <p>AI-powered intelligence for government contractors</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#faq">FAQ</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <a href="/terms">Terms of Service</a>
+                    <a href="/privacy">Privacy Policy</a>
+                    <a href="/acceptable-use">Acceptable Use</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <a href="mailto:info@trapiermanagement.com">info@trapiermanagement.com</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 GovCon Command Center. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
