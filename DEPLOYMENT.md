@@ -16,6 +16,6 @@ https://govcon-command-center-loazbutq1-info-58560041s-projects.vercel.app
 - `acceptable-use.html` - Acceptable Use Policy
 
 ## Stripe Payment Links
-- Starter: https://buy.stripe.com/4gM9AUgrO25IdiHd4138403
-- Professional: https://buy.stripe.com/dRm4gAcbyeSufqP3tr38404
-- Enterprise: https://buy.stripe.com/7sYeVe2AY9yaceD6FD38405
+- Starter: https://buy.stripe.com/bJe7sM0sQ39M7Yn6FD38407
+- Professional: https://buy.stripe.com/4gMbJ28Zm39M6UjbZX38406
+- Enterprise: https://buy.stripe.com/7sYfZi3F24dQceDggd38408
