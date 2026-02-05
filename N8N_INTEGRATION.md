@@ -19,18 +19,28 @@ Set up these credentials in your n8n instance:
 - **API Key:** Your Stripe Secret Key (`sk_live_...` or `sk_test_...`)
 - **Where to find:** Stripe Dashboard → Developers → API Keys
 
-### 2. Gmail / SMTP
-- **Type:** Gmail OAuth2 or SMTP
-- **For Gmail:** Use OAuth2 with your Google Cloud credentials
-- **For SMTP:** Use your email provider's SMTP settings
+### 2. Gmail
+- **Type:** Gmail OAuth2
+- **Setup:** n8n Settings → Credentials → Gmail OAuth2
+- **Requires:** Google Cloud Console OAuth credentials
+- **Scopes needed:** `gmail.send`
 
-### 3. SAM.gov API
+### 3. Notion
+- **Type:** Notion API (Internal Integration)
+- **Setup Steps:**
+  1. Go to https://www.notion.so/my-integrations
+  2. Create new integration for your workspace
+  3. Copy the "Internal Integration Token"
+  4. In Notion, share your CRM database with the integration
+- **Database Fields Needed:** Name, Email, Plan, Status, Stripe Customer ID, Signup Date
+
+### 4. SAM.gov API
 - **Type:** HTTP Header Auth
 - **Header Name:** `X-Api-Key`
 - **Header Value:** Your SAM.gov API key
 - **Get API Key:** https://sam.gov/data-services
 
-### 4. HubSpot (Optional)
+### 5. HubSpot (Optional)
 - **Type:** HubSpot OAuth2 or API Key
 - **Where to find:** HubSpot → Settings → Integrations → API Key
 
@@ -171,10 +181,39 @@ Import these workflow JSON files into your n8n instance:
 
 ## 🔍 Troubleshooting
 
+### Stripe Trigger not working
+1. **Check webhook URL:** In n8n, click Stripe Trigger → Copy the Webhook URL
+2. **Add to Stripe:** Dashboard → Developers → Webhooks → Add endpoint
+3. **Select events:** `checkout.session.completed`
+4. **Test:** Use Stripe CLI or test mode to send a test event
+
+### "If Purchase Completed" node configuration
+The condition should check:
+```
+Value 1: {{ $json.type }}
+Operation: equals
+Value 2: checkout.session.completed
+```
+
+### Gmail not sending
+1. **OAuth2 Setup:** Ensure Gmail OAuth2 credentials are connected
+2. **Expression for To field:** `{{ $json.data.object.customer_details.email }}`
+3. **Check Logs:** Click "Executions" tab to see error details
+4. **Google permissions:** Make sure the Gmail API is enabled in Google Cloud Console
+
+### Notion CRM not creating pages
+1. **Share database:** Your Notion database must be shared with the integration
+2. **Database ID:** Right-click database → Copy link → Extract ID from URL
+3. **Field mapping:** Ensure property names match exactly (case-sensitive)
+4. **Check expressions:**
+   - Name: `{{ $json.data.object.customer_details.name }}`
+   - Email: `{{ $json.data.object.customer_details.email }}`
+
 ### Webhook not receiving events
-1. Check n8n is publicly accessible
+1. Check n8n is publicly accessible (n8n.cloud handles this automatically)
 2. Verify webhook URL is correct in Stripe
 3. Check Stripe webhook logs for delivery attempts
+4. Ensure workflow is **Published/Active** (not just saved)
 
 ### SAM.gov API errors
 1. Verify API key is valid
@@ -182,9 +221,10 @@ Import these workflow JSON files into your n8n instance:
 3. Validate date format (MM/dd/yyyy)
 
 ### Email not sending
-1. Verify SMTP/Gmail credentials
+1. Verify Gmail OAuth2 credentials are authorized
 2. Check spam folders
 3. Review n8n execution logs
+4. Ensure "To" field has valid email expression
 
 ## 📞 Support
 

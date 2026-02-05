@@ -1,0 +1,183 @@
+{
+  "name": "GovCon Command Center - Purchase Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "events": ["checkout.session.completed"],
+        "options": {}
+      },
+      "id": "stripe-trigger",
+      "name": "Stripe Trigger",
+      "type": "n8n-nodes-base.stripeTrigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "govcon-stripe-checkout",
+      "credentials": {
+        "stripeApi": {
+          "id": "1",
+          "name": "Stripe API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-1",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "checkout.session.completed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-purchase-completed",
+      "name": "If Purchase Completed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.data.object.customer_details.email }}",
+        "subject": "🎉 Welcome to GovCon Command Center!",
+        "emailType": "html",
+        "message": "<!DOCTYPE html>\n<html>\n<head>\n<style>\nbody { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; }\n.header { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 40px; text-align: center; border-radius: 12px 12px 0 0; }\n.content { background: #f9fafb; padding: 40px; border-radius: 0 0 12px 12px; }\n.button { display: inline-block; background: #3b82f6; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 10px 0; }\n.steps { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }\n.step { padding: 15px 0; border-bottom: 1px solid #e5e7eb; }\n.step:last-child { border-bottom: none; }\n</style>\n</head>\n<body>\n<div class='header'>\n<h1>Welcome to GovCon Command Center!</h1>\n<p>Your subscription is now active</p>\n</div>\n<div class='content'>\n<p>Hi {{ $json.data.object.customer_details.name }},</p>\n<p>Thank you for subscribing to GovCon Command Center! You now have access to powerful AI automations that will help you win more government contracts.</p>\n\n<h3>🚀 Get Started in 3 Steps:</h3>\n<div class='steps'>\n<div class='step'><strong>Step 1:</strong> Duplicate your GovCon Notion Template</div>\n<div class='step'><strong>Step 2:</strong> Set your NAICS codes and keywords</div>\n<div class='step'><strong>Step 3:</strong> Configure your daily briefing preferences</div>\n</div>\n\n<p style='text-align:center'>\n<a href='https://trapiermanagement.notion.site/GovCon-Command-Center-Template' class='button'>📋 Get Your GovCon Template</a>\n</p>\n\n<p>Questions? Just reply to this email!</p>\n<p>Best,<br><strong>The GovCon Command Center Team</strong></p>\n</div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "send-welcome-email",
+      "name": "Send Welcome Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2,
+      "position": [700, 200],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2",
+          "name": "Gmail OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "create",
+        "databaseId": {
+          "__rl": true,
+          "value": "YOUR_NOTION_DATABASE_ID",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Name",
+              "title": "={{ $json.data.object.customer_details.name }}"
+            },
+            {
+              "key": "Email",
+              "email": "={{ $json.data.object.customer_details.email }}"
+            },
+            {
+              "key": "Plan",
+              "selectValue": "={{ $json.data.object.amount_total === 9700 ? 'Starter' : $json.data.object.amount_total === 19700 ? 'Professional' : 'Enterprise' }}"
+            },
+            {
+              "key": "Status",
+              "selectValue": "Active"
+            },
+            {
+              "key": "Stripe Customer ID",
+              "richTextValue": "={{ $json.data.object.customer }}"
+            },
+            {
+              "key": "Signup Date",
+              "dateValue": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "add-to-notion",
+      "name": "Add to Notion CRM",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2,
+      "position": [950, 200],
+      "credentials": {
+        "notionApi": {
+          "id": "3",
+          "name": "Notion API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1200, 200]
+    }
+  ],
+  "connections": {
+    "Stripe Trigger": {
+      "main": [
+        [
+          {
+            "node": "If Purchase Completed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Purchase Completed": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Send Welcome Email": {
+      "main": [
+        [
+          {
+            "node": "Add to Notion CRM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to Notion CRM": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
