@@ -1,0 +1,352 @@
+{
+  "name": "GovCon - Daily SAM.gov Monitor",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Daily 6 AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.sam.gov/opportunities/v2/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "postedFrom",
+              "value": "={{$now.minus(1, 'day').format('MM/dd/yyyy')}}"
+            },
+            {
+              "name": "postedTo",
+              "value": "={{$now.format('MM/dd/yyyy')}}"
+            },
+            {
+              "name": "limit",
+              "value": "100"
+            },
+            {
+              "name": "api_key",
+              "value": "={{$env.SAM_GOV_API_KEY}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "sam-gov-api",
+      "name": "Query SAM.gov API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [450, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "4",
+          "name": "SAM.gov API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json[\"opportunitiesData\"]?.length || 0}}",
+              "operation": "largerEqual",
+              "value2": 1
+            }
+          ]
+        }
+      },
+      "id": "has-opportunities",
+      "name": "Has Opportunities?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "opportunitiesData",
+        "options": {}
+      },
+      "id": "split-opportunities",
+      "name": "Split Opportunities",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"naicsCode\"]}}",
+              "operation": "contains",
+              "value2": "541"
+            }
+          ]
+        }
+      },
+      "id": "filter-naics",
+      "name": "Filter by NAICS",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "title",
+              "value": "={{$json[\"title\"]}}"
+            },
+            {
+              "name": "solicitationNumber",
+              "value": "={{$json[\"solicitationNumber\"]}}"
+            },
+            {
+              "name": "postedDate",
+              "value": "={{$json[\"postedDate\"]}}"
+            },
+            {
+              "name": "responseDeadline",
+              "value": "={{$json[\"responseDeadLine\"]}}"
+            },
+            {
+              "name": "type",
+              "value": "={{$json[\"type\"]}}"
+            },
+            {
+              "name": "setAside",
+              "value": "={{$json[\"typeOfSetAside\"] || 'None'}}"
+            },
+            {
+              "name": "agency",
+              "value": "={{$json[\"fullParentPathName\"]}}"
+            },
+            {
+              "name": "link",
+              "value": "https://sam.gov/opp/{{$json[\"noticeId\"]}}/view"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "format-opportunity",
+      "name": "Format Opportunity",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [1250, 100]
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [1450, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "const opportunities = $input.all()[0].json.data;\nconst count = opportunities.length;\n\nlet htmlContent = '';\n\nfor (const opp of opportunities) {\n  const deadline = opp.responseDeadline ? new Date(opp.responseDeadline).toLocaleDateString() : 'TBD';\n  \n  htmlContent += `\n    <div style=\"background: white; padding: 20px; margin-bottom: 15px; border-radius: 8px; border-left: 4px solid #3b82f6;\">\n      <h3 style=\"margin: 0 0 10px 0; color: #1e3a8a;\">${opp.title}</h3>\n      <p style=\"margin: 5px 0; color: #6b7280;\"><strong>Solicitation:</strong> ${opp.solicitationNumber}</p>\n      <p style=\"margin: 5px 0; color: #6b7280;\"><strong>Agency:</strong> ${opp.agency}</p>\n      <p style=\"margin: 5px 0; color: #6b7280;\"><strong>Type:</strong> ${opp.type}</p>\n      <p style=\"margin: 5px 0; color: #6b7280;\"><strong>Set-Aside:</strong> ${opp.setAside}</p>\n      <p style=\"margin: 5px 0; color: #ef4444;\"><strong>Deadline:</strong> ${deadline}</p>\n      <a href=\"${opp.link}\" style=\"display: inline-block; background: #3b82f6; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px; margin-top: 10px;\">View on SAM.gov →</a>\n    </div>\n  `;\n}\n\nreturn {\n  opportunity_count: count,\n  html_content: htmlContent,\n  date: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })\n};"
+      },
+      "id": "build-email",
+      "name": "Build Email HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1650, 100]
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "filterByFormula": "{status} = 'active'"
+      },
+      "id": "get-subscribers",
+      "name": "Get Active Subscribers",
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 1,
+      "position": [1850, 100],
+      "credentials": {
+        "airtableApi": {
+          "id": "5",
+          "name": "Airtable API"
+        }
+      },
+      "notes": "Or use HubSpot/your CRM to get subscriber list"
+    },
+    {
+      "parameters": {
+        "fromEmail": "intel@trapiermanagement.com",
+        "toEmail": "={{$json[\"email\"]}}",
+        "subject": "📊 GovCon Daily Brief: {{$('Build Email HTML').item.json.opportunity_count}} New Opportunities - {{$('Build Email HTML').item.json.date}}",
+        "text": "",
+        "html": "<!DOCTYPE html><html><head><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:#333;max-width:700px;margin:0 auto;padding:20px;background:#f3f4f6}.header{background:linear-gradient(135deg,#1e3a8a 0%,#3b82f6 100%);color:white;padding:30px;text-align:center;border-radius:12px}.header h1{margin:0}.summary{background:#10b981;color:white;padding:20px;text-align:center;border-radius:8px;margin:20px 0;font-size:1.2rem}.content{padding:20px 0}.footer{text-align:center;padding:30px;color:#6b7280;font-size:0.9rem}</style></head><body><div class='header'><h1>📊 GovCon Daily Brief</h1><p>{{$('Build Email HTML').item.json.date}}</p></div><div class='summary'>🎯 {{$('Build Email HTML').item.json.opportunity_count}} New Opportunities Matching Your Profile</div><div class='content'>{{$('Build Email HTML').item.json.html_content}}</div><div class='footer'><p>You're receiving this because you're subscribed to GovCon Command Center intelligence briefings.</p><p><a href='https://govcon-command-center.vercel.app'>Manage Preferences</a> | <a href='#'>Unsubscribe</a></p></div></body></html>",
+        "options": {}
+      },
+      "id": "send-digest",
+      "name": "Send Daily Digest",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [2050, 100],
+      "credentials": {
+        "smtp": {
+          "id": "1",
+          "name": "SMTP Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "message",
+              "value": "No new opportunities found matching your criteria today."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "no-results",
+      "name": "No Results",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [850, 400]
+    }
+  ],
+  "connections": {
+    "Daily 6 AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "Query SAM.gov API",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query SAM.gov API": {
+      "main": [
+        [
+          {
+            "node": "Has Opportunities?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Opportunities?": {
+      "main": [
+        [
+          {
+            "node": "Split Opportunities",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Opportunities": {
+      "main": [
+        [
+          {
+            "node": "Filter by NAICS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter by NAICS": {
+      "main": [
+        [
+          {
+            "node": "Format Opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Opportunity": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [
+          {
+            "node": "Build Email HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Email HTML": {
+      "main": [
+        [
+          {
+            "node": "Get Active Subscribers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Active Subscribers": {
+      "main": [
+        [
+          {
+            "node": "Send Daily Digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "GovCon",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}
