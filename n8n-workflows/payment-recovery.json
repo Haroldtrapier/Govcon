@@ -1,0 +1,302 @@
+{
+  "name": "GovCon - Payment Recovery",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "govcon-payment-failed",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Stripe Payment Failed Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{$json[\"type\"]}}",
+              "operation": "equals",
+              "value2": "invoice.payment_failed"
+            }
+          ]
+        }
+      },
+      "id": "is-payment-failed",
+      "name": "Is Payment Failed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "customer_id",
+              "value": "={{$json[\"data\"][\"object\"][\"customer\"]}}"
+            },
+            {
+              "name": "invoice_id",
+              "value": "={{$json[\"data\"][\"object\"][\"id\"]}}"
+            },
+            {
+              "name": "amount_due",
+              "value": "={{$json[\"data\"][\"object\"][\"amount_due\"] / 100}}"
+            },
+            {
+              "name": "attempt_count",
+              "value": "={{$json[\"data\"][\"object\"][\"attempt_count\"]}}"
+            },
+            {
+              "name": "next_attempt",
+              "value": "={{$json[\"data\"][\"object\"][\"next_payment_attempt\"] ? new Date($json[\"data\"][\"object\"][\"next_payment_attempt\"] * 1000).toLocaleDateString() : 'Final attempt'}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "extract-failure-data",
+      "name": "Extract Failure Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [650, 200]
+    },
+    {
+      "parameters": {
+        "resource": "customer",
+        "operation": "get",
+        "customerId": "={{$json[\"customer_id\"]}}"
+      },
+      "id": "get-customer",
+      "name": "Get Customer",
+      "type": "n8n-nodes-base.stripe",
+      "typeVersion": 1,
+      "position": [850, 200],
+      "credentials": {
+        "stripeApi": {
+          "id": "6",
+          "name": "Stripe API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$('Extract Failure Data').item.json.attempt_count}}",
+              "operation": "equals",
+              "value2": 1
+            }
+          ]
+        }
+      },
+      "id": "is-first-attempt",
+      "name": "Is First Attempt?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "fromEmail": "billing@trapiermanagement.com",
+        "toEmail": "={{$json[\"email\"]}}",
+        "subject": "⚠️ Action Required: Payment Failed for GovCon Command Center",
+        "text": "",
+        "html": "<!DOCTYPE html><html><head><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px}.header{background:#fef3c7;border:2px solid #f59e0b;padding:30px;text-align:center;border-radius:12px}.content{padding:40px 20px}.button{display:inline-block;background:#3b82f6;color:white;padding:15px 30px;text-decoration:none;border-radius:8px;font-weight:600}.warning{background:#fef2f2;border:1px solid #ef4444;padding:20px;border-radius:8px;margin:20px 0}</style></head><body><div class='header'><h1>⚠️ Payment Failed</h1></div><div class='content'><p>Hi {{$json[\"name\"]}},</p><p>We tried to process your payment of <strong>${{$('Extract Failure Data').item.json.amount_due}}</strong> for GovCon Command Center, but it didn't go through.</p><div class='warning'><strong>What happened?</strong><p>This usually happens when:</p><ul><li>Your card has expired</li><li>There were insufficient funds</li><li>Your bank declined the transaction</li></ul></div><p>Don't worry - we'll automatically retry on <strong>{{$('Extract Failure Data').item.json.next_attempt}}</strong>.</p><h3>Update Your Payment Method</h3><p>To avoid any interruption to your service, please update your payment information:</p><p style='text-align:center'><a href='https://billing.stripe.com/p/login/test_xxx' class='button'>Update Payment Method</a></p><p>If you have any questions, just reply to this email.</p><p>Best,<br><strong>The GovCon Billing Team</strong></p></div></body></html>",
+        "options": {}
+      },
+      "id": "send-first-dunning",
+      "name": "Send First Dunning Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [1250, 100],
+      "credentials": {
+        "smtp": {
+          "id": "1",
+          "name": "SMTP Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "billing@trapiermanagement.com",
+        "toEmail": "={{$json[\"email\"]}}",
+        "subject": "🚨 Urgent: Your GovCon Access May Be Suspended",
+        "text": "",
+        "html": "<!DOCTYPE html><html><head><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;line-height:1.6;color:#333;max-width:600px;margin:0 auto;padding:20px}.header{background:#fef2f2;border:2px solid #ef4444;padding:30px;text-align:center;border-radius:12px}.content{padding:40px 20px}.button{display:inline-block;background:#ef4444;color:white;padding:15px 30px;text-decoration:none;border-radius:8px;font-weight:600}.urgent{background:#fef2f2;border:2px solid #ef4444;padding:20px;border-radius:8px;margin:20px 0;text-align:center}</style></head><body><div class='header'><h1>🚨 Urgent: Account at Risk</h1></div><div class='content'><p>Hi {{$json[\"name\"]}},</p><p>We've tried multiple times to process your payment of <strong>${{$('Extract Failure Data').item.json.amount_due}}</strong>, but haven't been successful.</p><div class='urgent'><h3>⚠️ Your access will be suspended if we can't process payment</h3><p>This is our final notice before suspension.</p></div><p>Please update your payment method immediately to keep your GovCon Command Center access:</p><p style='text-align:center'><a href='https://billing.stripe.com/p/login/test_xxx' class='button'>Update Payment Now</a></p><p>If you're having trouble or need to discuss your account, please reply to this email immediately.</p><p>Best,<br><strong>The GovCon Billing Team</strong></p></div></body></html>",
+        "options": {}
+      },
+      "id": "send-urgent-dunning",
+      "name": "Send Urgent Dunning Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [1250, 300],
+      "credentials": {
+        "smtp": {
+          "id": "1",
+          "name": "SMTP Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "#billing-alerts",
+        "text": "💳 Payment Failed\n\n*Customer:* {{$json[\"email\"]}}\n*Amount:* ${{$('Extract Failure Data').item.json.amount_due}}\n*Attempt:* {{$('Extract Failure Data').item.json.attempt_count}}\n*Next Retry:* {{$('Extract Failure Data').item.json.next_attempt}}",
+        "otherOptions": {}
+      },
+      "id": "slack-billing-alert",
+      "name": "Alert Slack - Billing",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [1050, 400],
+      "credentials": {
+        "slackApi": {
+          "id": "3",
+          "name": "Slack API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "contact",
+        "operation": "update",
+        "email": "={{$json[\"email\"]}}",
+        "additionalFields": {
+          "customProperties": {
+            "property": [
+              {
+                "name": "payment_status",
+                "value": "failed"
+              },
+              {
+                "name": "payment_failed_date",
+                "value": "={{$now.format('yyyy-MM-dd')}}"
+              },
+              {
+                "name": "payment_attempt_count",
+                "value": "={{$('Extract Failure Data').item.json.attempt_count}}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "update-hubspot-payment",
+      "name": "Update HubSpot Payment Status",
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 1,
+      "position": [1450, 200],
+      "credentials": {
+        "hubspotApi": {
+          "id": "2",
+          "name": "HubSpot API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Stripe Payment Failed Webhook": {
+      "main": [
+        [
+          {
+            "node": "Is Payment Failed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Payment Failed?": {
+      "main": [
+        [
+          {
+            "node": "Extract Failure Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Failure Data": {
+      "main": [
+        [
+          {
+            "node": "Get Customer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Customer": {
+      "main": [
+        [
+          {
+            "node": "Is First Attempt?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Alert Slack - Billing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is First Attempt?": {
+      "main": [
+        [
+          {
+            "node": "Send First Dunning Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Urgent Dunning Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send First Dunning Email": {
+      "main": [
+        [
+          {
+            "node": "Update HubSpot Payment Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Urgent Dunning Email": {
+      "main": [
+        [
+          {
+            "node": "Update HubSpot Payment Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "GovCon",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ]
+}

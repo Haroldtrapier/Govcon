@@ -18,7 +18,16 @@ https://govcon-command-center-ll03fyhv2-info-58560041s-projects.vercel.app
 - Payment: Stripe
 - CRM: HubSpot
 - Email: Gmail API
-- Automation: Composio Rube
+- Automation: n8n / Composio Rube
+
+## 🔄 n8n Integration
+Ready-to-import workflow automations in `/n8n-workflows/`:
+- `customer-onboarding.json` - Stripe → Welcome Email → HubSpot
+- `sam-gov-monitor.json` - Daily SAM.gov opportunity monitoring
+- `subscription-management.json` - Handle upgrades/cancellations
+- `payment-recovery.json` - Failed payment dunning emails
+
+See [N8N_INTEGRATION.md](N8N_INTEGRATION.md) for complete setup guide.
 
 ## 📋 Recipes
 1. Customer Onboarding (rcp_4umz19GwXWpY)
