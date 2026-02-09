@@ -8,10 +8,11 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
 
-        .hero { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 100px 20px 120px; text-align: center; position: relative; overflow: hidden; }
+        .hero { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 140px 20px 120px; text-align: center; position: relative; overflow: hidden; }
         .hero h1 { font-size: 3.5rem; font-weight: 700; margin-bottom: 20px; line-height: 1.2; }
         .hero p { font-size: 1.5rem; margin-bottom: 40px; opacity: 0.95; max-width: 800px; margin-left: auto; margin-right: auto; }
         .cta-button { display: inline-block; background: #fbbf24; color: #1e3a8a; padding: 18px 40px; font-size: 1.2rem; font-weight: 600; text-decoration: none; border-radius: 8px; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -77,16 +78,45 @@
         .footer-section a:hover { color: white; }
         .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid #374151; color: #9ca3af; }
 
+        /* Navigation */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; background: rgba(30, 58, 138, 0.97); backdrop-filter: blur(10px); z-index: 1000; padding: 0 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 64px; }
+        .nav-logo { color: white; font-size: 1.2rem; font-weight: 700; text-decoration: none; }
+        .nav-logo span { color: #fbbf24; }
+        .nav-links { display: flex; gap: 30px; align-items: center; }
+        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #fbbf24; }
+        .nav-cta { background: #fbbf24; color: #1e3a8a !important; padding: 8px 20px; border-radius: 6px; font-weight: 600 !important; transition: all 0.3s !important; }
+        .nav-cta:hover { background: #f59e0b; transform: translateY(-1px); }
+        .mobile-toggle { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.5rem; }
             .hero p { font-size: 1.2rem; }
             .pricing-card.featured { transform: scale(1); }
             .features-grid { grid-template-columns: 1fr; }
             .pricing-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(30, 58, 138, 0.98); flex-direction: column; padding: 20px; gap: 15px; }
+            .nav-links.active { display: flex; }
+            .mobile-toggle { display: block; }
         }
     </style>
 </head>
 <body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">GovCon <span>Command Center</span></a>
+            <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Toggle menu">&#9776;</button>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#social-proof">Testimonials</a>
+                <a href="#faq">FAQ</a>
+                <a href="#pricing" class="nav-cta">Start Free Trial</a>
+            </div>
+        </div>
+    </nav>
 
     <section class="hero">
         <div class="hero-content">
@@ -118,7 +148,7 @@
         </div>
     </section>
 
-    <section class="features">
+    <section class="features" id="features">
         <div class="container">
             <h2>7 AI Automations Built for FEMA & State EMA Contracts</h2>
             <p class="features-subtitle">Every automation targets your FEMA/EMA pursuits—no federal IT noise, no irrelevant bloat</p>
@@ -177,7 +207,7 @@
                         <li>Basic competitor intel</li>
                         <li>1 user account</li>
                     </ul>
-                    <a href="https://buy.stripe.com/starter" class="buy-button">Start Free Trial</a>
+                    <a href="https://buy.stripe.com/bJe7sM0sQ39M7Yn6FD38407" class="buy-button">Start Free Trial</a>
                 </div>
 
                 <div class="pricing-card featured">
@@ -194,7 +224,7 @@
                         <li>Bid checklist generator</li>
                         <li>3 user accounts</li>
                     </ul>
-                    <a href="https://buy.stripe.com/professional" class="buy-button">Start Free Trial</a>
+                    <a href="https://buy.stripe.com/4gMbJ28Zm39M6UjbZX38406" class="buy-button">Start Free Trial</a>
                 </div>
 
                 <div class="pricing-card">
@@ -208,13 +238,13 @@
                         <li>API access</li>
                         <li>Quarterly strategy calls</li>
                     </ul>
-                    <a href="mailto:sales@govconcommand.com" class="buy-button">Contact Sales</a>
+                    <a href="https://buy.stripe.com/7sYfZi3F24dQceDggd38408" class="buy-button">Contact Sales</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="social-proof">
+    <section class="social-proof" id="social-proof">
         <div class="container">
             <h2>Trusted by FEMA-Focused Small Businesses</h2>
             <p class="trust-badge">⭐⭐⭐⭐⭐ "We caught a $2M State EMA contract in week 2 that we would have missed." — BD Director, Emergency Response Supplier</p>
@@ -226,7 +256,7 @@
         </div>
     </section>
 
-    <section class="faq">
+    <section class="faq" id="faq">
         <div class="container">
             <h2>Frequently Asked Questions</h2>
             <div class="faq-grid">
@@ -264,21 +294,18 @@
                 <h4>Product</h4>
                 <a href="#features">Features</a>
                 <a href="#pricing">Pricing</a>
-                <a href="#">Case Studies</a>
-                <a href="#">API Docs</a>
+                <a href="#faq">FAQ</a>
             </div>
             <div class="footer-section">
                 <h4>Company</h4>
-                <a href="#">About Us</a>
-                <a href="#">Blog</a>
-                <a href="#">Careers</a>
-                <a href="#">Contact</a>
+                <a href="#social-proof">Testimonials</a>
+                <a href="mailto:info@trapiermanagement.com">Contact</a>
             </div>
             <div class="footer-section">
                 <h4>Legal</h4>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Security</a>
+                <a href="/privacy.html">Privacy Policy</a>
+                <a href="/terms.html">Terms of Service</a>
+                <a href="/acceptable-use.html">Acceptable Use Policy</a>
             </div>
         </div>
         <div class="footer-bottom">
@@ -286,6 +313,5 @@
         </div>
     </footer>
 
-<!-- Deployment trigger: 2026-02-09-02:19 -->
 </body>
 </html>
