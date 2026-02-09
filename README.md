@@ -1,30 +1,55 @@
-# GovCon Command Center
+# GovCon AI
 
-AI-powered government contract intelligence SaaS platform.
+AI-powered government contracting intelligence platform.
 
-## 🚀 Live Site
-https://govcon-command-center-ll03fyhv2-info-58560041s-projects.vercel.app
+## Live Site
 
-## 📦 Features
-- Landing page with Stripe payment integration
-- Automated customer onboarding
-- Daily SAM.gov opportunity monitoring
-- Email intelligence briefings
-- HubSpot CRM integration
+Deployed on Vercel via GitHub integration. Auto-deploys on push to `main`.
 
-## 🛠️ Tech Stack
-- Frontend: HTML/CSS
-- Hosting: Vercel
-- Payment: Stripe
-- CRM: HubSpot
-- Email: Gmail API
-- Automation: Composio Rube
+## Product
 
-## 📋 Recipes
-1. Customer Onboarding (rcp_4umz19GwXWpY)
-2. Trial Email Sequence (rcp_dYFYmq7WCnW_)
-3. Master Product Delivery (rcp_70tJ4NzwU2gI)
-4. Google Form Integration (rcp_J3sa9PWaybvm)
+GovCon AI monitors SAM.gov 24/7, tracks FEMA & State EMA opportunities across 13 NAICS codes, and delivers prioritized intelligence to Slack and email.
 
-## 🔑 Setup
-See DEPLOYMENT_GUIDE.md for complete setup instructions.
+## Pricing
+
+| Plan | Price | Stripe Link |
+|------|-------|-------------|
+| Starter | $97/month | [Payment](https://buy.stripe.com/bJe7sM0sQ39M7Yn6FD38407) |
+| Professional | $197/month | [Payment](https://buy.stripe.com/4gMbJ28Zm39M6UjbZX38406) |
+| Enterprise | $397/month | [Payment](https://buy.stripe.com/7sYfZi3F24dQceDggd38408) |
+
+## Tech Stack
+
+- **Frontend:** HTML/CSS/JS (static site)
+- **Hosting:** Vercel
+- **Payments:** Stripe
+- **CRM:** HubSpot
+- **Email:** Gmail API
+
+## Files
+
+| File | Description |
+|------|-------------|
+| `index.html` | AI landing page (hero, features, pricing, FAQ, footer) |
+| `privacy.html` | Privacy Policy |
+| `terms.html` | Terms of Service |
+| `acceptable-use.html` | Acceptable Use Policy |
+| `vercel.json` | Vercel config (rewrites, security headers) |
+
+## Deployment
+
+1. Connect `Haroldtrapier/Govcon` repo to Vercel
+2. Framework: Other (static HTML)
+3. Root directory: `/`
+4. Auto-deploys on push to `main`
+
+## Note: Command Center
+
+Command Center is a **separate product** with its own repo and deployment.
+- **GovCon AI** = Contract intelligence & monitoring (this repo)
+- **Command Center** = Operations dashboard (separate)
+
+## Company
+
+Trapier Management LLC  
+Contact: info@trapiermanagement.com
