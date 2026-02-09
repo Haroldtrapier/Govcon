@@ -5,215 +5,573 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GovCon AI - Win Government Contracts with Artificial Intelligence</title>
     <meta name="description" content="AI-powered government contracting intelligence. Automatically monitor SAM.gov, track FEMA opportunities, get deadline alerts, and win more bids.">
+    <meta name="keywords" content="government contracts, GovCon, FEMA, SAM.gov, AI, artificial intelligence, government contracting, bid management">
+    <meta property="og:title" content="GovCon AI - Win Government Contracts with AI">
+    <meta property="og:description" content="AI-powered intelligence that monitors SAM.gov 24/7, tracks FEMA opportunities, and delivers prioritized briefs to your team.">
+    <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --bg-dark: #0a0e1a;
-            --bg-card: #111827;
-            --bg-card-hover: #1a2236;
+            --bg-dark: #06080f;
+            --bg-card: #0d1117;
+            --bg-card-hover: #151b27;
+            --bg-elevated: #111827;
             --accent: #3b82f6;
             --accent-light: #60a5fa;
-            --accent-glow: rgba(59, 130, 246, 0.15);
+            --accent-bright: #93bbfd;
+            --accent-glow: rgba(59, 130, 246, 0.12);
             --green: #10b981;
-            --green-glow: rgba(16, 185, 129, 0.15);
+            --green-light: #34d399;
+            --green-glow: rgba(16, 185, 129, 0.12);
             --purple: #8b5cf6;
-            --purple-glow: rgba(139, 92, 246, 0.15);
+            --purple-light: #a78bfa;
+            --purple-glow: rgba(139, 92, 246, 0.12);
             --amber: #f59e0b;
-            --amber-glow: rgba(245, 158, 11, 0.15);
+            --amber-glow: rgba(245, 158, 11, 0.12);
+            --cyan: #06b6d4;
+            --cyan-glow: rgba(6, 182, 212, 0.12);
             --text: #f1f5f9;
+            --text-secondary: #cbd5e1;
             --text-muted: #94a3b8;
             --text-dim: #64748b;
             --border: rgba(255,255,255,0.06);
-            --border-accent: rgba(59, 130, 246, 0.3);
+            --border-light: rgba(255,255,255,0.1);
+            --border-accent: rgba(59, 130, 246, 0.25);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-lg: 24px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; scroll-padding-top: 80px; }
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; color: var(--text); background: var(--bg-dark); -webkit-font-smoothing: antialiased; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background: var(--bg-dark);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
+        /* ── Animated Grid Background ── */
+        .grid-bg {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── Floating Orbs ── */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .orb-1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.08), transparent 70%);
+            top: -10%; left: -5%;
+            animation: orbFloat1 20s ease-in-out infinite;
+        }
+        .orb-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.06), transparent 70%);
+            top: 30%; right: -10%;
+            animation: orbFloat2 25s ease-in-out infinite;
+        }
+        .orb-3 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.05), transparent 70%);
+            bottom: 10%; left: 20%;
+            animation: orbFloat3 18s ease-in-out infinite;
+        }
+        @keyframes orbFloat1 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(60px, 40px); } }
+        @keyframes orbFloat2 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(-40px, 60px); } }
+        @keyframes orbFloat3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(50px, -30px); } }
+
+        /* ── Scroll Fade-in ── */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* ── Navbar ── */
-        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(10, 14, 26, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-        .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 72px; }
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: rgba(6, 8, 15, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border);
+            transition: background 0.3s;
+        }
+        .navbar.scrolled { background: rgba(6, 8, 15, 0.92); }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            display: flex; justify-content: space-between; align-items: center; height: 72px;
+        }
         .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-        .nav-logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--purple)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-        .nav-logo-text { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+        .nav-logo-icon {
+            width: 38px; height: 38px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.1rem; font-weight: 800; color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        .nav-logo-text { font-size: 1.15rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
         .nav-logo-text span { color: var(--accent-light); }
         .nav-links { display: flex; gap: 32px; align-items: center; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; }
         .nav-links a:hover { color: var(--text); }
-        .nav-cta { background: var(--accent) !important; color: white !important; padding: 10px 22px; border-radius: 8px; font-weight: 600 !important; transition: all 0.2s !important; }
-        .nav-cta:hover { background: #2563eb !important; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); }
+        .nav-cta {
+            background: var(--accent) !important; color: white !important;
+            padding: 10px 24px; border-radius: 8px; font-weight: 600 !important;
+            transition: all 0.2s !important;
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+        }
+        .nav-cta:hover {
+            background: #2563eb !important; transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.45);
+        }
         .mobile-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; padding: 8px; }
 
         /* ── Hero ── */
-        .hero { padding: 160px 24px 120px; text-align: center; position: relative; overflow: hidden; }
-        .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 50% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 60%), radial-gradient(ellipse at 30% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%); animation: heroGlow 8s ease-in-out infinite alternate; pointer-events: none; }
-        @keyframes heroGlow { 0% { transform: translate(0, 0); } 100% { transform: translate(2%, -2%); } }
+        .hero {
+            padding: 160px 24px 120px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 1000px; height: 600px;
+            background: radial-gradient(ellipse at 50% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 65%),
+                        radial-gradient(ellipse at 30% 60%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
 
-        .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-glow); border: 1px solid var(--border-accent); padding: 8px 20px; border-radius: 100px; font-size: 0.85rem; font-weight: 500; color: var(--accent-light); margin-bottom: 32px; }
-        .hero-badge .pulse { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.08));
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            padding: 8px 20px; border-radius: 100px;
+            font-size: 0.82rem; font-weight: 500; color: var(--accent-bright);
+            margin-bottom: 36px;
+            position: relative;
+        }
+        .hero-badge .pulse {
+            width: 8px; height: 8px; background: var(--green);
+            border-radius: 50%; animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.6); } }
 
-        .hero h1 { font-size: clamp(2.5rem, 5.5vw, 4.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.03em; }
-        .hero h1 .gradient-text { background: linear-gradient(135deg, var(--accent-light) 0%, var(--purple) 50%, var(--accent-light) 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradientShift 4s ease-in-out infinite; }
+        .hero h1 {
+            font-size: clamp(2.8rem, 6vw, 4.5rem);
+            font-weight: 900; line-height: 1.08;
+            margin-bottom: 28px; letter-spacing: -0.04em;
+            position: relative;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--purple-light) 40%, var(--cyan) 80%, var(--accent-light) 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 6s ease-in-out infinite;
+        }
         @keyframes gradientShift { 0%, 100% { background-position: 0% center; } 50% { background-position: 100% center; } }
 
-        .hero-sub { font-size: clamp(1.05rem, 2vw, 1.25rem); color: var(--text-muted); max-width: 680px; margin: 0 auto 48px; line-height: 1.7; }
-        .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 64px; }
-        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: white; padding: 16px 32px; font-size: 1.05rem; font-weight: 600; text-decoration: none; border-radius: 12px; transition: all 0.2s; border: none; cursor: pointer; }
-        .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59, 130, 246, 0.35); }
-        .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text-muted); padding: 16px 32px; font-size: 1.05rem; font-weight: 500; text-decoration: none; border-radius: 12px; border: 1px solid var(--border); transition: all 0.2s; }
-        .btn-secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.03); }
+        .hero-sub {
+            font-size: clamp(1.05rem, 2vw, 1.2rem);
+            color: var(--text-muted); max-width: 660px;
+            margin: 0 auto 48px; line-height: 1.75;
+        }
+        .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 72px; }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: white; padding: 16px 36px; font-size: 1.05rem; font-weight: 600;
+            text-decoration: none; border-radius: 12px; transition: all 0.25s;
+            border: none; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 35px rgba(59, 130, 246, 0.45), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        .btn-secondary {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(255,255,255,0.03); color: var(--text-secondary);
+            padding: 16px 36px; font-size: 1.05rem; font-weight: 500;
+            text-decoration: none; border-radius: 12px;
+            border: 1px solid var(--border-light); transition: all 0.25s;
+        }
+        .btn-secondary:hover {
+            color: var(--text); border-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+        }
 
         /* ── Hero Terminal ── */
-        .hero-terminal { max-width: 720px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; text-align: left; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-        .terminal-header { display: flex; align-items: center; gap: 8px; padding: 14px 20px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+        .hero-terminal {
+            max-width: 740px; margin: 0 auto;
+            background: linear-gradient(180deg, var(--bg-card), var(--bg-dark));
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg); overflow: hidden;
+            text-align: left;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.03);
+            position: relative;
+        }
+        .hero-terminal::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.4), rgba(139, 92, 246, 0.3), transparent);
+        }
+        .terminal-header {
+            display: flex; align-items: center; gap: 8px;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+        }
         .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
         .terminal-dot.red { background: #ef4444; }
         .terminal-dot.yellow { background: #f59e0b; }
         .terminal-dot.green { background: #10b981; }
-        .terminal-title { margin-left: 12px; font-size: 0.8rem; color: var(--text-dim); }
-        .terminal-body { padding: 24px; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.85rem; line-height: 1.8; }
+        .terminal-title { margin-left: 12px; font-size: 0.8rem; color: var(--text-dim); font-weight: 500; }
+        .terminal-body {
+            padding: 28px 24px;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem; line-height: 1.9;
+        }
         .terminal-line { display: flex; gap: 8px; }
         .terminal-prompt { color: var(--green); white-space: nowrap; }
         .terminal-cmd { color: var(--text); }
-        .terminal-output { color: var(--text-dim); margin-left: 0; }
+        .terminal-output { color: var(--text-dim); }
         .terminal-highlight { color: var(--accent-light); }
         .terminal-warn { color: var(--amber); }
         .terminal-success { color: var(--green); }
 
-        /* ── Logos / Stats Bar ── */
-        .stats-bar { padding: 80px 24px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        /* Typing animation for terminal */
+        .terminal-typing {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid var(--accent-light);
+            animation: typing 2.5s steps(45, end), blinkCursor 0.7s step-end infinite;
+        }
+        @keyframes typing { from { width: 0; } to { width: 100%; } }
+        @keyframes blinkCursor { 50% { border-color: transparent; } }
+
+        /* ── Stats Bar ── */
+        .stats-bar {
+            padding: 80px 24px;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
+        }
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center; }
-        .stat-item .stat-num { font-size: 2.5rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
-        .stat-item .stat-num span { background: linear-gradient(135deg, var(--accent-light), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .stat-item .stat-label { font-size: 0.9rem; color: var(--text-dim); }
+        .stat-item .stat-num {
+            font-size: 2.8rem; font-weight: 900; margin-bottom: 4px;
+            letter-spacing: -0.03em;
+        }
+        .stat-item .stat-num span {
+            background: linear-gradient(135deg, var(--accent-light), var(--purple-light));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .stat-item .stat-label { font-size: 0.88rem; color: var(--text-dim); font-weight: 500; }
+
+        /* ── Section Styles ── */
+        .section-label {
+            display: inline-block; font-size: 0.78rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.12em;
+            color: var(--accent-light); margin-bottom: 16px;
+        }
+        .section-title {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px;
+        }
+        .section-sub { font-size: 1.05rem; color: var(--text-muted); max-width: 600px; margin-bottom: 64px; line-height: 1.7; }
 
         /* ── How It Works ── */
-        .how-it-works { padding: 120px 24px; }
-        .section-label { display: inline-block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-light); margin-bottom: 16px; }
-        .section-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
-        .section-sub { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin-bottom: 64px; }
-
-        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-        .step-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 40px 32px; transition: all 0.3s; position: relative; overflow: hidden; }
-        .step-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0; transition: opacity 0.3s; }
-        .step-card:hover { border-color: var(--border-accent); transform: translateY(-4px); }
+        .how-it-works { padding: 120px 24px; position: relative; z-index: 1; }
+        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .step-card {
+            background: linear-gradient(180deg, var(--bg-card), rgba(13, 17, 23, 0.5));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 44px 32px;
+            transition: all 0.35s; position: relative; overflow: hidden;
+        }
+        .step-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            opacity: 0; transition: opacity 0.35s;
+        }
+        .step-card:hover { border-color: var(--border-accent); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
         .step-card:hover::before { opacity: 1; }
-        .step-num { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; font-size: 1.2rem; font-weight: 700; margin-bottom: 24px; }
+        .step-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 52px; height: 52px; border-radius: 14px;
+            font-size: 1.2rem; font-weight: 800; margin-bottom: 24px;
+        }
         .step-num.blue { background: var(--accent-glow); color: var(--accent-light); border: 1px solid var(--border-accent); }
-        .step-num.purple { background: var(--purple-glow); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.3); }
-        .step-num.green { background: var(--green-glow); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
-        .step-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
-        .step-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+        .step-num.purple { background: var(--purple-glow); color: var(--purple-light); border: 1px solid rgba(139, 92, 246, 0.25); }
+        .step-num.green { background: var(--green-glow); color: var(--green-light); border: 1px solid rgba(16, 185, 129, 0.25); }
+        .step-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em; }
+        .step-card p { color: var(--text-muted); font-size: 0.93rem; line-height: 1.7; }
 
         /* ── Features ── */
-        .features { padding: 120px 24px; }
-        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .feature-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 36px 28px; transition: all 0.3s; }
-        .feature-card:hover { border-color: var(--border-accent); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
-        .feature-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px; }
+        .features { padding: 120px 24px; position: relative; z-index: 1; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .feature-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 36px 28px;
+            transition: all 0.35s; position: relative; overflow: hidden;
+        }
+        .feature-card::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(59, 130, 246, 0.03), transparent);
+            opacity: 0; transition: opacity 0.35s;
+        }
+        .feature-card:hover { border-color: var(--border-accent); transform: translateY(-4px); box-shadow: 0 16px 40px rgba(0,0,0,0.25); }
+        .feature-card:hover::after { opacity: 1; }
+        .feature-card > * { position: relative; z-index: 1; }
+        .feature-icon {
+            width: 52px; height: 52px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; margin-bottom: 20px;
+        }
         .feature-icon.blue { background: var(--accent-glow); border: 1px solid var(--border-accent); }
-        .feature-icon.purple { background: var(--purple-glow); border: 1px solid rgba(139, 92, 246, 0.3); }
-        .feature-icon.green { background: var(--green-glow); border: 1px solid rgba(16, 185, 129, 0.3); }
-        .feature-icon.amber { background: var(--amber-glow); border: 1px solid rgba(245, 158, 11, 0.3); }
-        .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
-        .feature-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; }
-        .feature-tag { display: inline-block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 6px; margin-top: 16px; }
-        .feature-tag.ai { background: var(--purple-glow); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.2); }
-        .feature-tag.auto { background: var(--green-glow); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.2); }
-        .feature-tag.intel { background: var(--accent-glow); color: var(--accent-light); border: 1px solid rgba(59, 130, 246, 0.2); }
+        .feature-icon.purple { background: var(--purple-glow); border: 1px solid rgba(139, 92, 246, 0.25); }
+        .feature-icon.green { background: var(--green-glow); border: 1px solid rgba(16, 185, 129, 0.25); }
+        .feature-icon.amber { background: var(--amber-glow); border: 1px solid rgba(245, 158, 11, 0.25); }
+        .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; letter-spacing: -0.01em; }
+        .feature-card p { color: var(--text-muted); font-size: 0.88rem; line-height: 1.7; }
+        .feature-tag {
+            display: inline-block; font-size: 0.68rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            padding: 4px 10px; border-radius: 6px; margin-top: 16px;
+        }
+        .feature-tag.ai { background: var(--purple-glow); color: var(--purple-light); border: 1px solid rgba(139, 92, 246, 0.15); }
+        .feature-tag.auto { background: var(--green-glow); color: var(--green-light); border: 1px solid rgba(16, 185, 129, 0.15); }
+        .feature-tag.intel { background: var(--accent-glow); color: var(--accent-light); border: 1px solid rgba(59, 130, 246, 0.15); }
 
         /* ── AI Showcase ── */
-        .ai-showcase { padding: 120px 24px; border-top: 1px solid var(--border); }
+        .ai-showcase { padding: 120px 24px; border-top: 1px solid var(--border); position: relative; z-index: 1; }
         .showcase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
         .showcase-content .section-label { margin-bottom: 12px; }
         .showcase-content h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.02em; }
-        .showcase-content p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 32px; }
-        .showcase-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
-        .showcase-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 0.95rem; color: var(--text-muted); }
-        .showcase-list li .check { flex-shrink: 0; width: 24px; height: 24px; background: var(--green-glow); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--green); font-size: 0.75rem; margin-top: 2px; }
-        .showcase-visual { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
-        .showcase-visual-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-        .showcase-visual-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
-        .showcase-visual-title { font-size: 0.85rem; color: var(--text-dim); font-weight: 500; }
-        .ai-feed-item { padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; }
+        .showcase-content p { color: var(--text-muted); font-size: 1.02rem; line-height: 1.7; margin-bottom: 32px; }
+        .showcase-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+        .showcase-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 0.93rem; color: var(--text-muted); }
+        .showcase-list li .check {
+            flex-shrink: 0; width: 24px; height: 24px;
+            background: var(--green-glow); border: 1px solid rgba(16, 185, 129, 0.25);
+            border-radius: 7px; display: flex; align-items: center; justify-content: center;
+            color: var(--green); font-size: 0.75rem; margin-top: 2px;
+        }
+        .showcase-visual {
+            background: linear-gradient(180deg, var(--bg-card), var(--bg-dark));
+            border: 1px solid var(--border-light); border-radius: var(--radius-lg);
+            padding: 32px; position: relative; overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .showcase-visual::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.4), transparent);
+        }
+        .showcase-visual-header {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+        }
+        .showcase-visual-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+        .showcase-visual-title { font-size: 0.83rem; color: var(--text-dim); font-weight: 500; }
+        .ai-feed-item {
+            padding: 16px; background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border); border-radius: 12px;
+            margin-bottom: 12px; transition: all 0.25s;
+        }
+        .ai-feed-item:hover { background: rgba(255,255,255,0.04); border-color: var(--border-light); }
         .ai-feed-item:last-child { margin-bottom: 0; }
         .ai-feed-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .ai-feed-badge { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; }
-        .ai-feed-badge.new { background: var(--green-glow); color: var(--green); }
+        .ai-feed-badge { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; padding: 3px 8px; border-radius: 5px; letter-spacing: 0.03em; }
+        .ai-feed-badge.new { background: var(--green-glow); color: var(--green-light); }
         .ai-feed-badge.deadline { background: var(--amber-glow); color: var(--amber); }
-        .ai-feed-badge.match { background: var(--purple-glow); color: var(--purple); }
-        .ai-feed-time { font-size: 0.75rem; color: var(--text-dim); }
-        .ai-feed-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
-        .ai-feed-desc { font-size: 0.8rem; color: var(--text-dim); }
+        .ai-feed-badge.match { background: var(--purple-glow); color: var(--purple-light); }
+        .ai-feed-time { font-size: 0.73rem; color: var(--text-dim); }
+        .ai-feed-title { font-size: 0.88rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .ai-feed-desc { font-size: 0.78rem; color: var(--text-dim); }
 
         /* ── Pricing ── */
-        .pricing { padding: 120px 24px; border-top: 1px solid var(--border); }
-        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1050px; margin: 0 auto; }
-        .pricing-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 40px 32px; position: relative; transition: all 0.3s; }
-        .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
-        .pricing-card.featured { border-color: var(--accent); box-shadow: 0 0 40px rgba(59, 130, 246, 0.1); }
-        .pricing-card.featured .popular-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 6px 20px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+        .pricing { padding: 120px 24px; border-top: 1px solid var(--border); position: relative; z-index: 1; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1050px; margin: 0 auto; }
+        .pricing-card {
+            background: linear-gradient(180deg, var(--bg-card), rgba(13, 17, 23, 0.6));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 44px 32px;
+            position: relative; transition: all 0.35s;
+        }
+        .pricing-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .pricing-card.featured {
+            border-color: var(--accent);
+            box-shadow: 0 0 60px rgba(59, 130, 246, 0.08), 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .pricing-card.featured::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--accent), var(--purple), var(--accent));
+        }
+        .pricing-card.featured .popular-badge {
+            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            color: white; padding: 6px 22px; border-radius: 100px;
+            font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.06em; white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
         .pricing-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
-        .pricing-card .plan-desc { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 24px; }
+        .pricing-card .plan-desc { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 28px; line-height: 1.5; }
         .price-row { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
-        .price-amount { font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; }
+        .price-amount { font-size: 3.2rem; font-weight: 900; letter-spacing: -0.04em; }
         .price-period { font-size: 1rem; color: var(--text-dim); }
         .trial-note { font-size: 0.8rem; color: var(--green); font-weight: 500; margin-bottom: 32px; }
         .plan-features { list-style: none; margin-bottom: 32px; }
-        .plan-features li { padding: 10px 0; font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+        .plan-features li {
+            padding: 10px 0; font-size: 0.88rem; color: var(--text-muted);
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
         .plan-features li:last-child { border-bottom: none; }
         .plan-features li .check-icon { color: var(--green); font-size: 0.85rem; flex-shrink: 0; }
-        .plan-btn { display: block; width: 100%; text-align: center; padding: 14px; font-size: 0.95rem; font-weight: 600; text-decoration: none; border-radius: 10px; transition: all 0.2s; }
-        .plan-btn.primary { background: var(--accent); color: white; }
-        .plan-btn.primary:hover { background: #2563eb; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); }
-        .plan-btn.outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-        .plan-btn.outline:hover { border-color: var(--accent); color: var(--accent-light); }
+        .plan-btn {
+            display: block; width: 100%; text-align: center;
+            padding: 15px; font-size: 0.95rem; font-weight: 600;
+            text-decoration: none; border-radius: var(--radius-sm); transition: all 0.25s;
+        }
+        .plan-btn.primary {
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        .plan-btn.primary:hover {
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.5);
+            transform: translateY(-1px);
+        }
+        .plan-btn.outline {
+            background: transparent; color: var(--text-secondary);
+            border: 1px solid var(--border-light);
+        }
+        .plan-btn.outline:hover {
+            border-color: var(--accent); color: var(--accent-light);
+            background: var(--accent-glow);
+        }
 
         /* ── Testimonials ── */
-        .testimonials { padding: 120px 24px; }
-        .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-        .testimonial-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+        .testimonials { padding: 120px 24px; position: relative; z-index: 1; }
+        .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .testimonial-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 32px;
+            transition: all 0.3s;
+        }
+        .testimonial-card:hover { border-color: var(--border-light); transform: translateY(-2px); }
         .testimonial-stars { color: var(--amber); font-size: 0.9rem; margin-bottom: 16px; letter-spacing: 2px; }
-        .testimonial-text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+        .testimonial-text { font-size: 0.93rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
         .testimonial-author { display: flex; align-items: center; gap: 12px; }
-        .testimonial-avatar { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: white; }
+        .testimonial-avatar {
+            width: 42px; height: 42px; border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; font-weight: 700; color: white;
+        }
         .testimonial-info .name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
-        .testimonial-info .role { font-size: 0.8rem; color: var(--text-dim); }
+        .testimonial-info .role { font-size: 0.78rem; color: var(--text-dim); }
 
         /* ── FAQ ── */
-        .faq { padding: 120px 24px; border-top: 1px solid var(--border); }
+        .faq { padding: 120px 24px; border-top: 1px solid var(--border); position: relative; z-index: 1; }
         .faq-grid { max-width: 800px; margin: 0 auto; }
         .faq-item { border-bottom: 1px solid var(--border); }
-        .faq-question { width: 100%; background: none; border: none; padding: 24px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-align: left; font-family: inherit; }
-        .faq-question h3 { font-size: 1.05rem; font-weight: 600; color: var(--text); }
-        .faq-question .faq-toggle { font-size: 1.3rem; color: var(--text-dim); transition: transform 0.3s; flex-shrink: 0; margin-left: 16px; }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .faq-answer p { padding: 0 0 24px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
-        .faq-item.active .faq-toggle { transform: rotate(45deg); }
+        .faq-question {
+            width: 100%; background: none; border: none; padding: 24px 0;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; text-align: left; font-family: inherit;
+        }
+        .faq-question h3 { font-size: 1.02rem; font-weight: 600; color: var(--text); transition: color 0.2s; }
+        .faq-question:hover h3 { color: var(--accent-light); }
+        .faq-question .faq-toggle {
+            font-size: 1.3rem; color: var(--text-dim); transition: all 0.3s;
+            flex-shrink: 0; margin-left: 16px;
+        }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease-out; }
+        .faq-answer p { padding: 0 0 24px; color: var(--text-muted); font-size: 0.93rem; line-height: 1.7; }
+        .faq-item.active .faq-toggle { transform: rotate(45deg); color: var(--accent-light); }
         .faq-item.active .faq-answer { max-height: 300px; }
 
         /* ── CTA ── */
-        .final-cta { padding: 120px 24px; text-align: center; position: relative; overflow: hidden; }
-        .final-cta::before { content: ''; position: absolute; top: 50%; left: 50%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%); transform: translate(-50%, -50%); pointer-events: none; }
-        .final-cta h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 20px; letter-spacing: -0.02em; }
-        .final-cta p { font-size: 1.15rem; color: var(--text-muted); max-width: 560px; margin: 0 auto 40px; }
+        .final-cta {
+            padding: 140px 24px; text-align: center;
+            position: relative; overflow: hidden; z-index: 1;
+        }
+        .final-cta::before {
+            content: ''; position: absolute;
+            top: 50%; left: 50%; width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 65%);
+            transform: translate(-50%, -50%); pointer-events: none;
+        }
+        .final-cta h2 {
+            font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+            font-weight: 900; margin-bottom: 20px; letter-spacing: -0.03em;
+        }
+        .final-cta p { font-size: 1.1rem; color: var(--text-muted); max-width: 560px; margin: 0 auto 44px; line-height: 1.7; }
 
         /* ── Footer ── */
-        footer { padding: 60px 24px 32px; border-top: 1px solid var(--border); }
+        footer {
+            padding: 60px 24px 32px;
+            border-top: 1px solid var(--border);
+            position: relative; z-index: 1;
+            background: rgba(6, 8, 15, 0.8);
+        }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
-        .footer-brand p { color: var(--text-dim); font-size: 0.9rem; margin-top: 12px; line-height: 1.6; }
-        .footer-col h4 { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 16px; }
-        .footer-col a { display: block; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; padding: 5px 0; transition: color 0.2s; }
+        .footer-brand p { color: var(--text-dim); font-size: 0.88rem; margin-top: 12px; line-height: 1.6; }
+        .footer-col h4 {
+            font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 16px;
+        }
+        .footer-col a {
+            display: block; color: var(--text-muted); text-decoration: none;
+            font-size: 0.88rem; padding: 5px 0; transition: color 0.2s;
+        }
         .footer-col a:hover { color: var(--text); }
-        .footer-bottom { padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .footer-bottom p { font-size: 0.8rem; color: var(--text-dim); }
+        .footer-bottom {
+            padding-top: 32px; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .footer-bottom p { font-size: 0.78rem; color: var(--text-dim); }
 
         /* ── Responsive ── */
         @media (max-width: 1024px) {
@@ -222,7 +580,11 @@
             .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
         }
         @media (max-width: 768px) {
-            .nav-links { display: none; position: fixed; top: 72px; left: 0; right: 0; bottom: 0; background: rgba(10, 14, 26, 0.98); backdrop-filter: blur(20px); flex-direction: column; padding: 40px 24px; gap: 24px; }
+            .nav-links {
+                display: none; position: fixed; top: 72px; left: 0; right: 0; bottom: 0;
+                background: rgba(6, 8, 15, 0.98); backdrop-filter: blur(24px);
+                flex-direction: column; padding: 40px 24px; gap: 24px;
+            }
             .nav-links.active { display: flex; }
             .mobile-toggle { display: block; }
             .hero { padding: 130px 24px 80px; }
@@ -233,18 +595,24 @@
             .testimonials-grid { grid-template-columns: 1fr; }
             .footer-grid { grid-template-columns: 1fr; gap: 32px; }
             .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
-            .hero-terminal { margin: 0 -8px; }
+            .hero-terminal { margin: 0 -8px; border-radius: var(--radius); }
         }
     </style>
 </head>
 <body>
 
+    <!-- Ambient Background -->
+    <div class="grid-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
     <!-- ── Navbar ── -->
-    <nav class="navbar">
+    <nav class="navbar" id="navbar">
         <div class="nav-inner">
             <a href="/" class="nav-logo">
                 <div class="nav-logo-icon">G</div>
-                <div class="nav-logo-text">Gov<span>Con</span></div>
+                <div class="nav-logo-text">Gov<span>Con</span> AI</div>
             </a>
             <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Toggle menu">&#9776;</button>
             <div class="nav-links">
@@ -260,22 +628,23 @@
     <!-- ── Hero ── -->
     <section class="hero">
         <div class="container">
-            <div class="hero-badge">
+            <div class="hero-badge fade-up">
                 <span class="pulse"></span>
-                AI-Powered Intelligence for Government Contractors
+                AI-Powered Intelligence &mdash; Monitoring SAM.gov Now
             </div>
-            <h1>Stop Hunting for Contracts.<br><span class="gradient-text">Let AI Find Them for You.</span></h1>
-            <p class="hero-sub">GovCon monitors SAM.gov 24/7, tracks FEMA & State EMA opportunities across 13 NAICS codes, and delivers prioritized intelligence straight to your Slack and inbox.</p>
-            <div class="hero-actions">
+            <h1 class="fade-up">Stop Hunting for Contracts.<br><span class="gradient-text">Let AI Find Them for You.</span></h1>
+            <p class="hero-sub fade-up">GovCon AI monitors SAM.gov 24/7, tracks FEMA &amp; State EMA opportunities across 13 NAICS codes, and delivers prioritized intelligence to your Slack and inbox &mdash; before your competitors even start searching.</p>
+            <div class="hero-actions fade-up">
                 <a href="#pricing" class="btn-primary">Start 14-Day Free Trial <span>&#8594;</span></a>
                 <a href="#how-it-works" class="btn-secondary">See How It Works</a>
             </div>
-            <div class="hero-terminal">
+
+            <div class="hero-terminal fade-up">
                 <div class="terminal-header">
                     <span class="terminal-dot red"></span>
                     <span class="terminal-dot yellow"></span>
                     <span class="terminal-dot green"></span>
-                    <span class="terminal-title">govcon-ai &mdash; daily-brief</span>
+                    <span class="terminal-title">govcon-ai &mdash; daily intelligence brief</span>
                 </div>
                 <div class="terminal-body">
                     <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-cmd">govcon scan --naics 336413,339113 --keywords "disaster,FEMA"</span></div>
@@ -289,6 +658,7 @@
                     <div class="terminal-output">&nbsp;&nbsp;Contract Value: <span class="terminal-success">$1.2M</span> &middot; Due: <span class="terminal-warn">Feb 14, 2026</span></div>
                     <br>
                     <div class="terminal-output"><span class="terminal-success">&#10003; Brief delivered to #govcon-alerts on Slack</span></div>
+                    <div class="terminal-output"><span class="terminal-success">&#10003; Email digest sent to team@yourcompany.com</span></div>
                 </div>
             </div>
         </div>
@@ -297,7 +667,7 @@
     <!-- ── Stats Bar ── -->
     <section class="stats-bar">
         <div class="container">
-            <div class="stats-grid">
+            <div class="stats-grid fade-up">
                 <div class="stat-item">
                     <div class="stat-num"><span>2,847+</span></div>
                     <div class="stat-label">Listings scanned daily</div>
@@ -321,21 +691,21 @@
     <!-- ── How It Works ── -->
     <section class="how-it-works" id="how-it-works">
         <div class="container">
-            <span class="section-label">How It Works</span>
-            <h2 class="section-title">Three Steps to Winning More Bids</h2>
-            <p class="section-sub">Set up in minutes. Start receiving AI-curated contract intelligence the same day.</p>
+            <span class="section-label fade-up">How It Works</span>
+            <h2 class="section-title fade-up">Three Steps to Winning More Bids</h2>
+            <p class="section-sub fade-up">Set up in minutes. Start receiving AI-curated contract intelligence the same day.</p>
             <div class="steps-grid">
-                <div class="step-card">
+                <div class="step-card fade-up">
                     <div class="step-num blue">1</div>
                     <h3>Connect Your Profile</h3>
                     <p>Tell us your NAICS codes, target agencies, keywords, and preferred alert channels. We customize your AI filters to match exactly what your team pursues.</p>
                 </div>
-                <div class="step-card">
+                <div class="step-card fade-up">
                     <div class="step-num purple">2</div>
                     <h3>AI Scans &amp; Analyzes</h3>
                     <p>Our AI monitors SAM.gov, State EMA portals, and FEMA listings 24/7. It scores each opportunity by relevance, contract value, and deadline proximity.</p>
                 </div>
-                <div class="step-card">
+                <div class="step-card fade-up">
                     <div class="step-num green">3</div>
                     <h3>Get Actionable Briefs</h3>
                     <p>Every morning, receive a prioritized intelligence briefing in Slack and email. Deadline warnings fire 48 hours before close. Never miss a bid again.</p>
@@ -347,59 +717,59 @@
     <!-- ── Features ── -->
     <section class="features" id="features">
         <div class="container">
-            <span class="section-label">Capabilities</span>
-            <h2 class="section-title">7 AI Automations Working for You</h2>
-            <p class="section-sub">Every feature is built to find, track, and win government contracts faster.</p>
+            <span class="section-label fade-up">Capabilities</span>
+            <h2 class="section-title fade-up">9 AI Automations Working for You</h2>
+            <p class="section-sub fade-up">Every feature is built to find, track, and win government contracts faster.</p>
             <div class="features-grid">
-                <div class="feature-card">
+                <div class="feature-card fade-up">
                     <div class="feature-icon blue">&#127919;</div>
                     <h3>FEMA-Tuned SAM.gov Monitor</h3>
                     <p>Tracks 13 NAICS codes and 26+ disaster/FEMA keywords. Filters out noise so you only see relevant emergency management contracts.</p>
                     <span class="feature-tag ai">AI-Powered</span>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-up">
                     <div class="feature-icon green">&#128202;</div>
                     <h3>Daily Intelligence Brief</h3>
                     <p>Every morning at 8 AM: new FEMA opportunities, expiring-soon alerts, and State EMA updates delivered to Slack and email.</p>
                     <span class="feature-tag auto">Automated</span>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-up">
                     <div class="feature-icon amber">&#9200;</div>
                     <h3>48-Hour Deadline Warnings</h3>
                     <p>Automatic alerts when an RFP closes in 2 days. Push notifications to Slack and email so your team never scrambles last minute.</p>
                     <span class="feature-tag auto">Automated</span>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-up">
                     <div class="feature-icon purple">&#128269;</div>
                     <h3>Competitor Intel Tracker</h3>
                     <p>See which small businesses won recent FEMA contracts in your NAICS codes. Analyze teaming patterns and pricing strategies.</p>
                     <span class="feature-tag intel">Intelligence</span>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-up">
                     <div class="feature-icon blue">&#128200;</div>
                     <h3>FEMA Spending Trends</h3>
                     <p>Monthly reports on where FEMA dollars are flowing: top states, top categories, and emerging disaster response opportunities.</p>
                     <span class="feature-tag intel">Intelligence</span>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-up">
                     <div class="feature-icon green">&#129309;</div>
                     <h3>State EMA Contact Lookup</h3>
                     <p>When a State EMA opportunity appears, AI automatically fetches the procurement officer's name, phone, and email from public records.</p>
                     <span class="feature-tag ai">AI-Powered</span>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-up">
                     <div class="feature-icon purple">&#128221;</div>
                     <h3>Bid Checklist Generator</h3>
                     <p>Upload an RFP and get a tailored checklist of required certifications, deliverables, and submission steps for FEMA compliance.</p>
                     <span class="feature-tag ai">AI-Powered</span>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-up">
                     <div class="feature-icon amber">&#128640;</div>
                     <h3>Slack &amp; Email Integration</h3>
                     <p>All intelligence delivered where your team already works. No new dashboards to check. Briefs, alerts, and reports come to you.</p>
                     <span class="feature-tag auto">Automated</span>
                 </div>
-                <div class="feature-card">
+                <div class="feature-card fade-up">
                     <div class="feature-icon blue">&#128161;</div>
                     <h3>Smart Match Scoring</h3>
                     <p>AI ranks every opportunity by relevance to your profile, contract size, competition level, and win probability. Focus on what matters.</p>
@@ -413,10 +783,10 @@
     <section class="ai-showcase" id="ai-showcase">
         <div class="container">
             <div class="showcase-grid">
-                <div class="showcase-content">
-                    <span class="section-label">AI Intelligence</span>
-                    <h2>Your AI Analyst That Never Sleeps</h2>
-                    <p>While your competitors manually search SAM.gov every morning, GovCon's AI has already analyzed thousands of listings, scored them against your profile, and delivered a prioritized brief before your first coffee.</p>
+                <div class="showcase-content fade-up">
+                    <span class="section-label">AI Intelligence Engine</span>
+                    <h2>Your AI Analyst That <span class="gradient-text">Never Sleeps</span></h2>
+                    <p>While your competitors manually search SAM.gov every morning, GovCon AI has already analyzed thousands of listings, scored them against your profile, and delivered a prioritized brief before your first coffee.</p>
                     <ul class="showcase-list">
                         <li><span class="check">&#10003;</span> Natural language processing to understand RFP requirements</li>
                         <li><span class="check">&#10003;</span> Relevance scoring based on your past wins and NAICS codes</li>
@@ -425,7 +795,7 @@
                         <li><span class="check">&#10003;</span> Trend detection across FEMA spending categories</li>
                     </ul>
                 </div>
-                <div class="showcase-visual">
+                <div class="showcase-visual fade-up">
                     <div class="showcase-visual-header">
                         <span class="showcase-visual-dot"></span>
                         <span class="showcase-visual-title">Live AI Feed &mdash; Today's Brief</span>
@@ -463,12 +833,12 @@
     <section class="pricing" id="pricing">
         <div class="container">
             <div style="text-align: center; margin-bottom: 64px;">
-                <span class="section-label">Pricing</span>
-                <h2 class="section-title" style="max-width: 100%;">Simple, Transparent Plans</h2>
-                <p class="section-sub" style="margin: 16px auto 0;">Every plan includes a 14-day free trial. No credit card required.</p>
+                <span class="section-label fade-up">Pricing</span>
+                <h2 class="section-title fade-up" style="max-width: 100%;">Simple, Transparent Plans</h2>
+                <p class="section-sub fade-up" style="margin: 16px auto 0;">Every plan includes a 14-day free trial. No credit card required.</p>
             </div>
             <div class="pricing-grid">
-                <div class="pricing-card">
+                <div class="pricing-card fade-up">
                     <h3>Starter</h3>
                     <p class="plan-desc">For solo BD professionals getting started with GovCon intelligence.</p>
                     <div class="price-row">
@@ -486,7 +856,7 @@
                     <a href="https://buy.stripe.com/bJe7sM0sQ39M7Yn6FD38407" class="plan-btn outline">Start Free Trial</a>
                 </div>
 
-                <div class="pricing-card featured">
+                <div class="pricing-card featured fade-up">
                     <div class="popular-badge">Most Popular</div>
                     <h3>Professional</h3>
                     <p class="plan-desc">For growing GovCon teams that need full AI-powered intelligence.</p>
@@ -508,7 +878,7 @@
                     <a href="https://buy.stripe.com/4gMbJ28Zm39M6UjbZX38406" class="plan-btn primary">Start Free Trial</a>
                 </div>
 
-                <div class="pricing-card">
+                <div class="pricing-card fade-up">
                     <h3>Enterprise</h3>
                     <p class="plan-desc">For established contractors who want every edge in the market.</p>
                     <div class="price-row">
@@ -534,11 +904,11 @@
     <section class="testimonials" id="testimonials">
         <div class="container">
             <div style="text-align: center; margin-bottom: 64px;">
-                <span class="section-label">Testimonials</span>
-                <h2 class="section-title">Trusted by FEMA-Focused Teams</h2>
+                <span class="section-label fade-up">Testimonials</span>
+                <h2 class="section-title fade-up">Trusted by FEMA-Focused Teams</h2>
             </div>
             <div class="testimonials-grid">
-                <div class="testimonial-card">
+                <div class="testimonial-card fade-up">
                     <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                     <p class="testimonial-text">"We caught a $2M State EMA contract in week 2 that we would have completely missed. The AI matching is incredibly accurate."</p>
                     <div class="testimonial-author">
@@ -549,7 +919,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card">
+                <div class="testimonial-card fade-up">
                     <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                     <p class="testimonial-text">"The 48-hour deadline alerts alone have saved us twice. We used to miss bids regularly. Now we submit early every time."</p>
                     <div class="testimonial-author">
@@ -560,7 +930,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="testimonial-card">
+                <div class="testimonial-card fade-up">
                     <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
                     <p class="testimonial-text">"Replaced 3 hours of daily SAM.gov searching with a single Slack message. Our BD team now spends time on proposals, not hunting."</p>
                     <div class="testimonial-author">
@@ -579,20 +949,20 @@
     <section class="faq" id="faq">
         <div class="container">
             <div style="text-align: center; margin-bottom: 64px;">
-                <span class="section-label">FAQ</span>
-                <h2 class="section-title">Frequently Asked Questions</h2>
+                <span class="section-label fade-up">FAQ</span>
+                <h2 class="section-title fade-up">Frequently Asked Questions</h2>
             </div>
             <div class="faq-grid">
-                <div class="faq-item">
+                <div class="faq-item fade-up">
                     <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
                         <h3>Do I need to be SAM.gov registered?</h3>
                         <span class="faq-toggle">+</span>
                     </button>
                     <div class="faq-answer">
-                        <p>No! We monitor SAM.gov for you. You just need to be pursuing FEMA/State EMA contracts in our supported NAICS codes. You'll need SAM registration to actually bid, but GovCon works independently.</p>
+                        <p>No! We monitor SAM.gov for you. You just need to be pursuing FEMA/State EMA contracts in our supported NAICS codes. You'll need SAM registration to actually bid, but GovCon AI works independently.</p>
                     </div>
                 </div>
-                <div class="faq-item">
+                <div class="faq-item fade-up">
                     <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
                         <h3>Can I add my own keywords beyond the 26 you track?</h3>
                         <span class="faq-toggle">+</span>
@@ -601,7 +971,7 @@
                         <p>Yes, on the Professional plan and above. Add terms like "disaster response," "PPE supply," "emergency logistics," or your proprietary product names for even more targeted results.</p>
                     </div>
                 </div>
-                <div class="faq-item">
+                <div class="faq-item fade-up">
                     <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
                         <h3>Is this only for federal FEMA contracts?</h3>
                         <span class="faq-toggle">+</span>
@@ -610,7 +980,7 @@
                         <p>No! We also track State Emergency Management Agencies (EMAs) and their procurement portals. Many states publish opportunities separately from SAM.gov, and our AI monitors those too.</p>
                     </div>
                 </div>
-                <div class="faq-item">
+                <div class="faq-item fade-up">
                     <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
                         <h3>What if I'm not sure which NAICS codes apply to me?</h3>
                         <span class="faq-toggle">+</span>
@@ -619,7 +989,7 @@
                         <p>During onboarding, we'll review your products and services and recommend the best 5-13 codes for your business. You can always adjust your profile later as your focus evolves.</p>
                     </div>
                 </div>
-                <div class="faq-item">
+                <div class="faq-item fade-up">
                     <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
                         <h3>How does the 14-day free trial work?</h3>
                         <span class="faq-toggle">+</span>
@@ -628,13 +998,22 @@
                         <p>Sign up, connect your Slack or email, and start receiving daily briefs immediately. No credit card required upfront. Cancel anytime before day 14 with zero charges.</p>
                     </div>
                 </div>
-                <div class="faq-item">
+                <div class="faq-item fade-up">
                     <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
                         <h3>How accurate is the AI matching?</h3>
                         <span class="faq-toggle">+</span>
                     </button>
                     <div class="faq-answer">
                         <p>Our AI uses natural language processing to understand RFP requirements beyond simple keyword matching. It considers your NAICS codes, past pursuits, agency preferences, and contract size range to deliver highly relevant matches.</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-up">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                        <h3>What's the difference between GovCon AI and Command Center?</h3>
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>GovCon AI is your contract intelligence platform that monitors, scores, and alerts you to government opportunities. Command Center (coming soon) is a separate operations dashboard for managing your active contracts, team, and workflows. Two products, one mission: help you win and deliver government contracts.</p>
                     </div>
                 </div>
             </div>
@@ -644,9 +1023,9 @@
     <!-- ── Final CTA ── -->
     <section class="final-cta">
         <div class="container">
-            <h2>Ready to Win More<br><span class="gradient-text">Government Contracts?</span></h2>
-            <p>Join 40+ FEMA-focused contractors who use AI to find opportunities faster, never miss deadlines, and outpace the competition.</p>
-            <div class="hero-actions">
+            <h2 class="fade-up">Ready to Win More<br><span class="gradient-text">Government Contracts?</span></h2>
+            <p class="fade-up">Join 40+ FEMA-focused contractors who use AI to find opportunities faster, never miss deadlines, and outpace the competition.</p>
+            <div class="hero-actions fade-up">
                 <a href="#pricing" class="btn-primary">Start Your 14-Day Free Trial <span>&#8594;</span></a>
             </div>
         </div>
@@ -659,7 +1038,7 @@
                 <div class="footer-brand">
                     <a href="/" class="nav-logo" style="margin-bottom: 4px;">
                         <div class="nav-logo-icon">G</div>
-                        <div class="nav-logo-text">Gov<span>Con</span></div>
+                        <div class="nav-logo-text">Gov<span>Con</span> AI</div>
                     </a>
                     <p>AI-powered government contracting intelligence for small-to-midsize FEMA-focused teams.</p>
                 </div>
@@ -683,10 +1062,50 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2026 GovCon. Trapier Management LLC. All rights reserved.</p>
+                <p>&copy; 2026 GovCon AI. Trapier Management LLC. All rights reserved.</p>
             </div>
         </div>
     </footer>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 40);
+        });
+
+        // Intersection Observer for fade-up animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    // Stagger animations slightly
+                    const delay = entry.target.dataset.delay || 0;
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, delay);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.fade-up').forEach((el, index) => {
+            // Add stagger delay for grid items
+            const parent = el.parentElement;
+            if (parent && (parent.classList.contains('steps-grid') || parent.classList.contains('features-grid') ||
+                parent.classList.contains('pricing-grid') || parent.classList.contains('testimonials-grid'))) {
+                const siblings = Array.from(parent.children);
+                el.dataset.delay = siblings.indexOf(el) * 80;
+            }
+            observer.observe(el);
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelector('.nav-links').classList.remove('active');
+            });
+        });
+    </script>
 
 </body>
 </html>
