@@ -25,6 +25,6 @@ https://govcon-command-center-loazbutq1-info-58560041s-projects.vercel.app
 - `vercel.json` - Vercel deployment configuration
 
 ## Stripe Payment Links
-- Starter ($197/mo): https://buy.stripe.com/bJe7sM0sQ39M7Yn6FD38407
-- Professional ($497/mo): https://buy.stripe.com/4gMbJ28Zm39M6UjbZX38406
-- Enterprise (Custom): https://buy.stripe.com/7sYfZi3F24dQceDggd38408
+- Starter ($97/mo): https://buy.stripe.com/bJe7sM0sQ39M7Yn6FD38407
+- Professional ($197/mo): https://buy.stripe.com/4gMbJ28Zm39M6UjbZX38406
+- Enterprise ($397/mo): https://buy.stripe.com/7sYfZi3F24dQceDggd38408
