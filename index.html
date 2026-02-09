@@ -3,314 +3,688 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GovCon Command Center - Win More Government Contracts on Autopilot</title>
-    <meta name="description" content="7 AI-powered automations that monitor SAM.gov opportunities, track RFP deadlines, and deliver intelligence so you never miss a bid.">
+    <title>GovCon AI - Win Government Contracts with Artificial Intelligence</title>
+    <meta name="description" content="AI-powered government contracting intelligence. Automatically monitor SAM.gov, track FEMA opportunities, get deadline alerts, and win more bids.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
+        :root {
+            --bg-dark: #0a0e1a;
+            --bg-card: #111827;
+            --bg-card-hover: #1a2236;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --accent-glow: rgba(59, 130, 246, 0.15);
+            --green: #10b981;
+            --green-glow: rgba(16, 185, 129, 0.15);
+            --purple: #8b5cf6;
+            --purple-glow: rgba(139, 92, 246, 0.15);
+            --amber: #f59e0b;
+            --amber-glow: rgba(245, 158, 11, 0.15);
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
+            --border: rgba(255,255,255,0.06);
+            --border-accent: rgba(59, 130, 246, 0.3);
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; scroll-padding-top: 80px; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.6; color: var(--text); background: var(--bg-dark); -webkit-font-smoothing: antialiased; }
 
-        .hero { background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: white; padding: 140px 20px 120px; text-align: center; position: relative; overflow: hidden; }
-        .hero h1 { font-size: 3.5rem; font-weight: 700; margin-bottom: 20px; line-height: 1.2; }
-        .hero p { font-size: 1.5rem; margin-bottom: 40px; opacity: 0.95; max-width: 800px; margin-left: auto; margin-right: auto; }
-        .cta-button { display: inline-block; background: #fbbf24; color: #1e3a8a; padding: 18px 40px; font-size: 1.2rem; font-weight: 600; text-decoration: none; border-radius: 8px; transition: all 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.2); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
-        .problem-solution { padding: 80px 20px; background: #f9fafb; }
-        .problem-solution h2 { text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #1e3a8a; }
-        .problems { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
-        .problem-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; }
-        .problem-card:hover { transform: translateY(-5px); }
-        .problem-card.stop { border-top: 4px solid #ef4444; }
-        .problem-card.start { border-top: 4px solid #10b981; }
-        .problem-card h3 { font-size: 1.5rem; margin-bottom: 15px; color: #1f2937; }
-        .problem-card p { font-size: 1.1rem; color: #6b7280; }
+        /* ── Navbar ── */
+        .navbar { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(10, 14, 26, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+        .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; height: 72px; }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .nav-logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--accent), var(--purple)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .nav-logo-text { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+        .nav-logo-text span { color: var(--accent-light); }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--text); }
+        .nav-cta { background: var(--accent) !important; color: white !important; padding: 10px 22px; border-radius: 8px; font-weight: 600 !important; transition: all 0.2s !important; }
+        .nav-cta:hover { background: #2563eb !important; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); }
+        .mobile-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.5rem; cursor: pointer; padding: 8px; }
 
-        .features { padding: 80px 20px; background: white; }
-        .features h2 { text-align: center; font-size: 2.5rem; margin-bottom: 20px; color: #1e3a8a; }
-        .features-subtitle { text-align: center; font-size: 1.2rem; color: #6b7280; margin-bottom: 60px; }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
-        .feature-card { padding: 35px; border: 2px solid #e5e7eb; border-radius: 12px; transition: all 0.3s; }
-        .feature-card:hover { transform: translateY(-5px); box-shadow: 0 8px 16px rgba(0,0,0,0.1); border-color: #3b82f6; }
-        .feature-icon { font-size: 2.5rem; margin-bottom: 15px; display: block; }
-        .feature-card h3 { font-size: 1.3rem; margin-bottom: 10px; color: #1f2937; }
-        .feature-card p { color: #6b7280; line-height: 1.6; }
+        /* ── Hero ── */
+        .hero { padding: 160px 24px 120px; text-align: center; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(ellipse at 50% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 60%), radial-gradient(ellipse at 30% 50%, rgba(139, 92, 246, 0.05) 0%, transparent 50%); animation: heroGlow 8s ease-in-out infinite alternate; pointer-events: none; }
+        @keyframes heroGlow { 0% { transform: translate(0, 0); } 100% { transform: translate(2%, -2%); } }
 
-        .pricing { padding: 80px 20px; background: #f9fafb; }
-        .pricing h2 { text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #1e3a8a; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto; }
-        .pricing-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; transition: transform 0.3s; border: 2px solid #e5e7eb; position: relative; }
-        .pricing-card.featured { border-color: #3b82f6; transform: scale(1.05); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
-        .pricing-card.featured::before { content: 'MOST POPULAR'; position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #3b82f6; color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-        .pricing-card:hover { transform: scale(1.05); }
-        .pricing-card h3 { font-size: 1.8rem; margin-bottom: 10px; color: #1f2937; }
-        .price { font-size: 3rem; font-weight: 700; color: #1e3a8a; margin: 20px 0; }
-        .price span { font-size: 1.2rem; color: #6b7280; font-weight: 400; }
-        .trial-badge { background: #10b981; color: white; padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; display: inline-block; margin-bottom: 20px; }
-        .features-list { list-style: none; margin: 30px 0; text-align: left; }
-        .features-list li { padding: 12px 0; border-bottom: 1px solid #e5e7eb; color: #4b5563; }
-        .features-list li:last-child { border-bottom: none; }
-        .features-list li::before { content: '✓'; color: #10b981; font-weight: bold; margin-right: 10px; }
-        .buy-button { display: block; width: 100%; background: #3b82f6; color: white; padding: 15px; font-size: 1.1rem; font-weight: 600; text-decoration: none; border-radius: 8px; margin-top: 20px; transition: background 0.3s; }
-        .buy-button:hover { background: #2563eb; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--accent-glow); border: 1px solid var(--border-accent); padding: 8px 20px; border-radius: 100px; font-size: 0.85rem; font-weight: 500; color: var(--accent-light); margin-bottom: 32px; }
+        .hero-badge .pulse { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.5); } }
 
-        .social-proof { padding: 80px 20px; background: white; text-align: center; }
-        .social-proof h2 { font-size: 2.5rem; margin-bottom: 40px; color: #1e3a8a; }
-        .trust-badge { font-size: 1.3rem; color: #6b7280; margin-bottom: 40px; }
-        .badges { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-top: 40px; }
-        .badge { padding: 15px 30px; background: #f3f4f6; border-radius: 8px; color: #6b7280; font-weight: 500; }
+        .hero h1 { font-size: clamp(2.5rem, 5.5vw, 4.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.03em; }
+        .hero h1 .gradient-text { background: linear-gradient(135deg, var(--accent-light) 0%, var(--purple) 50%, var(--accent-light) 100%); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradientShift 4s ease-in-out infinite; }
+        @keyframes gradientShift { 0%, 100% { background-position: 0% center; } 50% { background-position: 100% center; } }
 
-        .faq { padding: 80px 20px; background: #f9fafb; }
-        .faq h2 { text-align: center; font-size: 2.5rem; margin-bottom: 60px; color: #1e3a8a; }
+        .hero-sub { font-size: clamp(1.05rem, 2vw, 1.25rem); color: var(--text-muted); max-width: 680px; margin: 0 auto 48px; line-height: 1.7; }
+        .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 64px; }
+        .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--accent); color: white; padding: 16px 32px; font-size: 1.05rem; font-weight: 600; text-decoration: none; border-radius: 12px; transition: all 0.2s; border: none; cursor: pointer; }
+        .btn-primary:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(59, 130, 246, 0.35); }
+        .btn-secondary { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--text-muted); padding: 16px 32px; font-size: 1.05rem; font-weight: 500; text-decoration: none; border-radius: 12px; border: 1px solid var(--border); transition: all 0.2s; }
+        .btn-secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.03); }
+
+        /* ── Hero Terminal ── */
+        .hero-terminal { max-width: 720px; margin: 0 auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; text-align: left; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+        .terminal-header { display: flex; align-items: center; gap: 8px; padding: 14px 20px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .terminal-dot.red { background: #ef4444; }
+        .terminal-dot.yellow { background: #f59e0b; }
+        .terminal-dot.green { background: #10b981; }
+        .terminal-title { margin-left: 12px; font-size: 0.8rem; color: var(--text-dim); }
+        .terminal-body { padding: 24px; font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.85rem; line-height: 1.8; }
+        .terminal-line { display: flex; gap: 8px; }
+        .terminal-prompt { color: var(--green); white-space: nowrap; }
+        .terminal-cmd { color: var(--text); }
+        .terminal-output { color: var(--text-dim); margin-left: 0; }
+        .terminal-highlight { color: var(--accent-light); }
+        .terminal-warn { color: var(--amber); }
+        .terminal-success { color: var(--green); }
+
+        /* ── Logos / Stats Bar ── */
+        .stats-bar { padding: 80px 24px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px; text-align: center; }
+        .stat-item .stat-num { font-size: 2.5rem; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+        .stat-item .stat-num span { background: linear-gradient(135deg, var(--accent-light), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .stat-item .stat-label { font-size: 0.9rem; color: var(--text-dim); }
+
+        /* ── How It Works ── */
+        .how-it-works { padding: 120px 24px; }
+        .section-label { display: inline-block; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent-light); margin-bottom: 16px; }
+        .section-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+        .section-sub { font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin-bottom: 64px; }
+
+        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+        .step-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 40px 32px; transition: all 0.3s; position: relative; overflow: hidden; }
+        .step-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); opacity: 0; transition: opacity 0.3s; }
+        .step-card:hover { border-color: var(--border-accent); transform: translateY(-4px); }
+        .step-card:hover::before { opacity: 1; }
+        .step-num { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 12px; font-size: 1.2rem; font-weight: 700; margin-bottom: 24px; }
+        .step-num.blue { background: var(--accent-glow); color: var(--accent-light); border: 1px solid var(--border-accent); }
+        .step-num.purple { background: var(--purple-glow); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.3); }
+        .step-num.green { background: var(--green-glow); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .step-card h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; color: var(--text); }
+        .step-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+
+        /* ── Features ── */
+        .features { padding: 120px 24px; }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .feature-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 36px 28px; transition: all 0.3s; }
+        .feature-card:hover { border-color: var(--border-accent); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .feature-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px; }
+        .feature-icon.blue { background: var(--accent-glow); border: 1px solid var(--border-accent); }
+        .feature-icon.purple { background: var(--purple-glow); border: 1px solid rgba(139, 92, 246, 0.3); }
+        .feature-icon.green { background: var(--green-glow); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .feature-icon.amber { background: var(--amber-glow); border: 1px solid rgba(245, 158, 11, 0.3); }
+        .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; }
+        .feature-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; }
+        .feature-tag { display: inline-block; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 4px 10px; border-radius: 6px; margin-top: 16px; }
+        .feature-tag.ai { background: var(--purple-glow); color: var(--purple); border: 1px solid rgba(139, 92, 246, 0.2); }
+        .feature-tag.auto { background: var(--green-glow); color: var(--green); border: 1px solid rgba(16, 185, 129, 0.2); }
+        .feature-tag.intel { background: var(--accent-glow); color: var(--accent-light); border: 1px solid rgba(59, 130, 246, 0.2); }
+
+        /* ── AI Showcase ── */
+        .ai-showcase { padding: 120px 24px; border-top: 1px solid var(--border); }
+        .showcase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+        .showcase-content .section-label { margin-bottom: 12px; }
+        .showcase-content h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.02em; }
+        .showcase-content p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; margin-bottom: 32px; }
+        .showcase-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+        .showcase-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 0.95rem; color: var(--text-muted); }
+        .showcase-list li .check { flex-shrink: 0; width: 24px; height: 24px; background: var(--green-glow); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--green); font-size: 0.75rem; margin-top: 2px; }
+        .showcase-visual { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+        .showcase-visual-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+        .showcase-visual-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
+        .showcase-visual-title { font-size: 0.85rem; color: var(--text-dim); font-weight: 500; }
+        .ai-feed-item { padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; }
+        .ai-feed-item:last-child { margin-bottom: 0; }
+        .ai-feed-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .ai-feed-badge { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; }
+        .ai-feed-badge.new { background: var(--green-glow); color: var(--green); }
+        .ai-feed-badge.deadline { background: var(--amber-glow); color: var(--amber); }
+        .ai-feed-badge.match { background: var(--purple-glow); color: var(--purple); }
+        .ai-feed-time { font-size: 0.75rem; color: var(--text-dim); }
+        .ai-feed-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+        .ai-feed-desc { font-size: 0.8rem; color: var(--text-dim); }
+
+        /* ── Pricing ── */
+        .pricing { padding: 120px 24px; border-top: 1px solid var(--border); }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; max-width: 1050px; margin: 0 auto; }
+        .pricing-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 40px 32px; position: relative; transition: all 0.3s; }
+        .pricing-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+        .pricing-card.featured { border-color: var(--accent); box-shadow: 0 0 40px rgba(59, 130, 246, 0.1); }
+        .pricing-card.featured .popular-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 6px 20px; border-radius: 100px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; white-space: nowrap; }
+        .pricing-card h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+        .pricing-card .plan-desc { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 24px; }
+        .price-row { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
+        .price-amount { font-size: 3rem; font-weight: 800; letter-spacing: -0.03em; }
+        .price-period { font-size: 1rem; color: var(--text-dim); }
+        .trial-note { font-size: 0.8rem; color: var(--green); font-weight: 500; margin-bottom: 32px; }
+        .plan-features { list-style: none; margin-bottom: 32px; }
+        .plan-features li { padding: 10px 0; font-size: 0.9rem; color: var(--text-muted); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+        .plan-features li:last-child { border-bottom: none; }
+        .plan-features li .check-icon { color: var(--green); font-size: 0.85rem; flex-shrink: 0; }
+        .plan-btn { display: block; width: 100%; text-align: center; padding: 14px; font-size: 0.95rem; font-weight: 600; text-decoration: none; border-radius: 10px; transition: all 0.2s; }
+        .plan-btn.primary { background: var(--accent); color: white; }
+        .plan-btn.primary:hover { background: #2563eb; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); }
+        .plan-btn.outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .plan-btn.outline:hover { border-color: var(--accent); color: var(--accent-light); }
+
+        /* ── Testimonials ── */
+        .testimonials { padding: 120px 24px; }
+        .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+        .testimonial-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+        .testimonial-stars { color: var(--amber); font-size: 0.9rem; margin-bottom: 16px; letter-spacing: 2px; }
+        .testimonial-text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+        .testimonial-author { display: flex; align-items: center; gap: 12px; }
+        .testimonial-avatar { width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 700; color: white; }
+        .testimonial-info .name { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+        .testimonial-info .role { font-size: 0.8rem; color: var(--text-dim); }
+
+        /* ── FAQ ── */
+        .faq { padding: 120px 24px; border-top: 1px solid var(--border); }
         .faq-grid { max-width: 800px; margin: 0 auto; }
-        .faq-item { background: white; padding: 30px; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.3s; }
-        .faq-item:hover { transform: translateX(5px); }
-        .faq-item h3 { font-size: 1.3rem; margin-bottom: 15px; color: #1f2937; }
-        .faq-item p { color: #6b7280; line-height: 1.8; }
+        .faq-item { border-bottom: 1px solid var(--border); }
+        .faq-question { width: 100%; background: none; border: none; padding: 24px 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-align: left; font-family: inherit; }
+        .faq-question h3 { font-size: 1.05rem; font-weight: 600; color: var(--text); }
+        .faq-question .faq-toggle { font-size: 1.3rem; color: var(--text-dim); transition: transform 0.3s; flex-shrink: 0; margin-left: 16px; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .faq-answer p { padding: 0 0 24px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+        .faq-item.active .faq-toggle { transform: rotate(45deg); }
+        .faq-item.active .faq-answer { max-height: 300px; }
 
-        footer { background: #1f2937; color: white; padding: 60px 20px 30px; }
-        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px; }
-        .footer-section h4 { font-size: 1.2rem; margin-bottom: 20px; }
-        .footer-section p { color: #9ca3af; margin-bottom: 15px; }
-        .footer-section a { display: block; color: #9ca3af; text-decoration: none; margin-bottom: 10px; transition: color 0.3s; }
-        .footer-section a:hover { color: white; }
-        .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid #374151; color: #9ca3af; }
+        /* ── CTA ── */
+        .final-cta { padding: 120px 24px; text-align: center; position: relative; overflow: hidden; }
+        .final-cta::before { content: ''; position: absolute; top: 50%; left: 50%; width: 600px; height: 600px; background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%); transform: translate(-50%, -50%); pointer-events: none; }
+        .final-cta h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; margin-bottom: 20px; letter-spacing: -0.02em; }
+        .final-cta p { font-size: 1.15rem; color: var(--text-muted); max-width: 560px; margin: 0 auto 40px; }
 
-        /* Navigation */
-        .navbar { position: fixed; top: 0; left: 0; right: 0; background: rgba(30, 58, 138, 0.97); backdrop-filter: blur(10px); z-index: 1000; padding: 0 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; height: 64px; }
-        .nav-logo { color: white; font-size: 1.2rem; font-weight: 700; text-decoration: none; }
-        .nav-logo span { color: #fbbf24; }
-        .nav-links { display: flex; gap: 30px; align-items: center; }
-        .nav-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color 0.3s; }
-        .nav-links a:hover { color: #fbbf24; }
-        .nav-cta { background: #fbbf24; color: #1e3a8a !important; padding: 8px 20px; border-radius: 6px; font-weight: 600 !important; transition: all 0.3s !important; }
-        .nav-cta:hover { background: #f59e0b; transform: translateY(-1px); }
-        .mobile-toggle { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        /* ── Footer ── */
+        footer { padding: 60px 24px 32px; border-top: 1px solid var(--border); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+        .footer-brand p { color: var(--text-dim); font-size: 0.9rem; margin-top: 12px; line-height: 1.6; }
+        .footer-col h4 { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-dim); margin-bottom: 16px; }
+        .footer-col a { display: block; color: var(--text-muted); text-decoration: none; font-size: 0.9rem; padding: 5px 0; transition: color 0.2s; }
+        .footer-col a:hover { color: var(--text); }
+        .footer-bottom { padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .footer-bottom p { font-size: 0.8rem; color: var(--text-dim); }
 
+        /* ── Responsive ── */
+        @media (max-width: 1024px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .showcase-grid { grid-template-columns: 1fr; gap: 48px; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+        }
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .hero p { font-size: 1.2rem; }
-            .pricing-card.featured { transform: scale(1); }
-            .features-grid { grid-template-columns: 1fr; }
-            .pricing-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: rgba(30, 58, 138, 0.98); flex-direction: column; padding: 20px; gap: 15px; }
+            .nav-links { display: none; position: fixed; top: 72px; left: 0; right: 0; bottom: 0; background: rgba(10, 14, 26, 0.98); backdrop-filter: blur(20px); flex-direction: column; padding: 40px 24px; gap: 24px; }
             .nav-links.active { display: flex; }
             .mobile-toggle { display: block; }
+            .hero { padding: 130px 24px 80px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr; }
+            .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+            .hero-terminal { margin: 0 -8px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- ── Navbar ── -->
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="/" class="nav-logo">GovCon <span>Command Center</span></a>
+        <div class="nav-inner">
+            <a href="/" class="nav-logo">
+                <div class="nav-logo-icon">G</div>
+                <div class="nav-logo-text">Gov<span>Con</span></div>
+            </a>
             <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Toggle menu">&#9776;</button>
             <div class="nav-links">
+                <a href="#how-it-works">How It Works</a>
                 <a href="#features">Features</a>
                 <a href="#pricing">Pricing</a>
-                <a href="#social-proof">Testimonials</a>
                 <a href="#faq">FAQ</a>
                 <a href="#pricing" class="nav-cta">Start Free Trial</a>
             </div>
         </div>
     </nav>
 
+    <!-- ── Hero ── -->
     <section class="hero">
-        <div class="hero-content">
-            <div class="container">
-                <h1>Win More FEMA & State EMA Contracts<br>with AI-Powered Intelligence</h1>
-                <p>Automated FEMA-focused intelligence with 13 NAICS codes, 26+ keywords,<br>and daily briefings to your Slack & email—built for small-to-midsize GovCon teams</p>
-                <a href="#pricing" class="cta-button">Start 14-Day Free Trial →</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="problem-solution">
         <div class="container">
-            <h2>Built for Small-to-Midsize GovCon Teams Chasing FEMA Work</h2>
-            <div class="problems">
-                <div class="problem-card stop">
-                    <h3>❌ STOP Manually Hunting SAM.gov Daily</h3>
-                    <p>Your BD team wastes 2+ hours/day searching keywords, scrolling through noise, and missing critical FEMA opportunities.</p>
+            <div class="hero-badge">
+                <span class="pulse"></span>
+                AI-Powered Intelligence for Government Contractors
+            </div>
+            <h1>Stop Hunting for Contracts.<br><span class="gradient-text">Let AI Find Them for You.</span></h1>
+            <p class="hero-sub">GovCon monitors SAM.gov 24/7, tracks FEMA & State EMA opportunities across 13 NAICS codes, and delivers prioritized intelligence straight to your Slack and inbox.</p>
+            <div class="hero-actions">
+                <a href="#pricing" class="btn-primary">Start 14-Day Free Trial <span>&#8594;</span></a>
+                <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+            </div>
+            <div class="hero-terminal">
+                <div class="terminal-header">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                    <span class="terminal-title">govcon-ai &mdash; daily-brief</span>
                 </div>
-                <div class="problem-card stop">
-                    <h3>❌ STOP Forgetting RFP Deadlines</h3>
-                    <p>Sticky notes and spreadsheets fail. You've missed bids because a State EMA contract slipped through the cracks.</p>
-                </div>
-                <div class="problem-card start">
-                    <h3>✅ START Getting Daily Intelligence</h3>
-                    <p>Wake up to a prioritized FEMA/EMA brief in Slack & email—only relevant contracts, with 48-hour warnings before deadlines.</p>
+                <div class="terminal-body">
+                    <div class="terminal-line"><span class="terminal-prompt">$</span> <span class="terminal-cmd">govcon scan --naics 336413,339113 --keywords "disaster,FEMA"</span></div>
+                    <br>
+                    <div class="terminal-output"><span class="terminal-highlight">&#9670; Scanning SAM.gov...</span> 2,847 listings analyzed</div>
+                    <div class="terminal-output"><span class="terminal-success">&#10003; 12 new matches</span> found for your profile</div>
+                    <div class="terminal-output"><span class="terminal-warn">&#9888; 3 deadlines</span> closing within 48 hours</div>
+                    <br>
+                    <div class="terminal-output"><span class="terminal-highlight">&#9670; Top Match (97% relevance):</span></div>
+                    <div class="terminal-output">&nbsp;&nbsp;FEMA Emergency Shelter Equipment Supply</div>
+                    <div class="terminal-output">&nbsp;&nbsp;Contract Value: <span class="terminal-success">$1.2M</span> &middot; Due: <span class="terminal-warn">Feb 14, 2026</span></div>
+                    <br>
+                    <div class="terminal-output"><span class="terminal-success">&#10003; Brief delivered to #govcon-alerts on Slack</span></div>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- ── Stats Bar ── -->
+    <section class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-num"><span>2,847+</span></div>
+                    <div class="stat-label">Listings scanned daily</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num"><span>13</span></div>
+                    <div class="stat-label">NAICS codes tracked</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num"><span>26+</span></div>
+                    <div class="stat-label">FEMA/disaster keywords</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num"><span>3 hrs</span></div>
+                    <div class="stat-label">Saved per BD staff/week</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── How It Works ── -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <span class="section-label">How It Works</span>
+            <h2 class="section-title">Three Steps to Winning More Bids</h2>
+            <p class="section-sub">Set up in minutes. Start receiving AI-curated contract intelligence the same day.</p>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num blue">1</div>
+                    <h3>Connect Your Profile</h3>
+                    <p>Tell us your NAICS codes, target agencies, keywords, and preferred alert channels. We customize your AI filters to match exactly what your team pursues.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num purple">2</div>
+                    <h3>AI Scans &amp; Analyzes</h3>
+                    <p>Our AI monitors SAM.gov, State EMA portals, and FEMA listings 24/7. It scores each opportunity by relevance, contract value, and deadline proximity.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-num green">3</div>
+                    <h3>Get Actionable Briefs</h3>
+                    <p>Every morning, receive a prioritized intelligence briefing in Slack and email. Deadline warnings fire 48 hours before close. Never miss a bid again.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Features ── -->
     <section class="features" id="features">
         <div class="container">
-            <h2>7 AI Automations Built for FEMA & State EMA Contracts</h2>
-            <p class="features-subtitle">Every automation targets your FEMA/EMA pursuits—no federal IT noise, no irrelevant bloat</p>
+            <span class="section-label">Capabilities</span>
+            <h2 class="section-title">7 AI Automations Working for You</h2>
+            <p class="section-sub">Every feature is built to find, track, and win government contracts faster.</p>
             <div class="features-grid">
                 <div class="feature-card">
-                    <span class="feature-icon">🎯</span>
-                    <h3>1. FEMA-Tuned SAM.gov Monitor</h3>
-                    <p>Automatically tracks 13 NAICS codes (e.g., 336413 aircraft parts, 339113 surgical equipment) and 26+ FEMA/disaster keywords. Filters out non-emergency contracts so you only see what matters.</p>
+                    <div class="feature-icon blue">&#127919;</div>
+                    <h3>FEMA-Tuned SAM.gov Monitor</h3>
+                    <p>Tracks 13 NAICS codes and 26+ disaster/FEMA keywords. Filters out noise so you only see relevant emergency management contracts.</p>
+                    <span class="feature-tag ai">AI-Powered</span>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">📊</span>
-                    <h3>2. Daily FEMA Brief to Slack & Email</h3>
-                    <p>Every morning at 8am: new FEMA opportunities, expiring soon alerts, and State EMA updates. No login required—intelligence comes to you.</p>
+                    <div class="feature-icon green">&#128202;</div>
+                    <h3>Daily Intelligence Brief</h3>
+                    <p>Every morning at 8 AM: new FEMA opportunities, expiring-soon alerts, and State EMA updates delivered to Slack and email.</p>
+                    <span class="feature-tag auto">Automated</span>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">⏰</span>
-                    <h3>3. 48-Hour Deadline Warnings</h3>
-                    <p>Automatic Slack + email alerts when an RFP closes in 2 days. Never scramble at the last minute again.</p>
+                    <div class="feature-icon amber">&#9200;</div>
+                    <h3>48-Hour Deadline Warnings</h3>
+                    <p>Automatic alerts when an RFP closes in 2 days. Push notifications to Slack and email so your team never scrambles last minute.</p>
+                    <span class="feature-tag auto">Automated</span>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">🔍</span>
-                    <h3>4. Competitor Intel Tracker</h3>
-                    <p>See which small businesses won recent FEMA contracts in your NAICS codes. Learn their teaming patterns and pricing strategies.</p>
+                    <div class="feature-icon purple">&#128269;</div>
+                    <h3>Competitor Intel Tracker</h3>
+                    <p>See which small businesses won recent FEMA contracts in your NAICS codes. Analyze teaming patterns and pricing strategies.</p>
+                    <span class="feature-tag intel">Intelligence</span>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">📈</span>
-                    <h3>5. FEMA Spending Trends</h3>
-                    <p>Monthly reports showing where FEMA dollars are flowing: top states, top categories, emerging disaster response needs.</p>
+                    <div class="feature-icon blue">&#128200;</div>
+                    <h3>FEMA Spending Trends</h3>
+                    <p>Monthly reports on where FEMA dollars are flowing: top states, top categories, and emerging disaster response opportunities.</p>
+                    <span class="feature-tag intel">Intelligence</span>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">🤝</span>
-                    <h3>6. State EMA Contact Auto-Lookup</h3>
-                    <p>When a State EMA opportunity appears, automatically fetches the procurement officer's name, phone, and email from public records.</p>
+                    <div class="feature-icon green">&#129309;</div>
+                    <h3>State EMA Contact Lookup</h3>
+                    <p>When a State EMA opportunity appears, AI automatically fetches the procurement officer's name, phone, and email from public records.</p>
+                    <span class="feature-tag ai">AI-Powered</span>
                 </div>
                 <div class="feature-card">
-                    <span class="feature-icon">📝</span>
-                    <h3>7. Bid Checklist Generator</h3>
-                    <p>Upload an RFP → get a tailored checklist of required certifications, deliverables, and submission steps for FEMA compliance.</p>
+                    <div class="feature-icon purple">&#128221;</div>
+                    <h3>Bid Checklist Generator</h3>
+                    <p>Upload an RFP and get a tailored checklist of required certifications, deliverables, and submission steps for FEMA compliance.</p>
+                    <span class="feature-tag ai">AI-Powered</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon amber">&#128640;</div>
+                    <h3>Slack &amp; Email Integration</h3>
+                    <p>All intelligence delivered where your team already works. No new dashboards to check. Briefs, alerts, and reports come to you.</p>
+                    <span class="feature-tag auto">Automated</span>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon blue">&#128161;</div>
+                    <h3>Smart Match Scoring</h3>
+                    <p>AI ranks every opportunity by relevance to your profile, contract size, competition level, and win probability. Focus on what matters.</p>
+                    <span class="feature-tag ai">AI-Powered</span>
                 </div>
             </div>
         </div>
     </section>
 
+    <!-- ── AI Showcase ── -->
+    <section class="ai-showcase" id="ai-showcase">
+        <div class="container">
+            <div class="showcase-grid">
+                <div class="showcase-content">
+                    <span class="section-label">AI Intelligence</span>
+                    <h2>Your AI Analyst That Never Sleeps</h2>
+                    <p>While your competitors manually search SAM.gov every morning, GovCon's AI has already analyzed thousands of listings, scored them against your profile, and delivered a prioritized brief before your first coffee.</p>
+                    <ul class="showcase-list">
+                        <li><span class="check">&#10003;</span> Natural language processing to understand RFP requirements</li>
+                        <li><span class="check">&#10003;</span> Relevance scoring based on your past wins and NAICS codes</li>
+                        <li><span class="check">&#10003;</span> Automatic extraction of key dates, values, and contacts</li>
+                        <li><span class="check">&#10003;</span> Competitive landscape analysis per opportunity</li>
+                        <li><span class="check">&#10003;</span> Trend detection across FEMA spending categories</li>
+                    </ul>
+                </div>
+                <div class="showcase-visual">
+                    <div class="showcase-visual-header">
+                        <span class="showcase-visual-dot"></span>
+                        <span class="showcase-visual-title">Live AI Feed &mdash; Today's Brief</span>
+                    </div>
+                    <div class="ai-feed-item">
+                        <div class="ai-feed-meta">
+                            <span class="ai-feed-badge new">New Match</span>
+                            <span class="ai-feed-time">8:01 AM</span>
+                        </div>
+                        <div class="ai-feed-title">FEMA Region IV - Emergency Shelter Equipment</div>
+                        <div class="ai-feed-desc">$1.2M &middot; NAICS 339113 &middot; 97% match score</div>
+                    </div>
+                    <div class="ai-feed-item">
+                        <div class="ai-feed-meta">
+                            <span class="ai-feed-badge deadline">Deadline Alert</span>
+                            <span class="ai-feed-time">8:01 AM</span>
+                        </div>
+                        <div class="ai-feed-title">TX State EMA - Disaster Communication Systems</div>
+                        <div class="ai-feed-desc">Closes in 36 hours &middot; $480K &middot; NAICS 334220</div>
+                    </div>
+                    <div class="ai-feed-item">
+                        <div class="ai-feed-meta">
+                            <span class="ai-feed-badge match">Competitor Win</span>
+                            <span class="ai-feed-time">8:01 AM</span>
+                        </div>
+                        <div class="ai-feed-title">ABC Emergency Services won FL EMA contract</div>
+                        <div class="ai-feed-desc">$890K &middot; Your NAICS &middot; Teaming partner: DEF Logistics</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ── Pricing ── -->
     <section class="pricing" id="pricing">
         <div class="container">
-            <h2>Choose Your Plan</h2>
+            <div style="text-align: center; margin-bottom: 64px;">
+                <span class="section-label">Pricing</span>
+                <h2 class="section-title" style="max-width: 100%;">Simple, Transparent Plans</h2>
+                <p class="section-sub" style="margin: 16px auto 0;">Every plan includes a 14-day free trial. No credit card required.</p>
+            </div>
             <div class="pricing-grid">
                 <div class="pricing-card">
                     <h3>Starter</h3>
-                    <div class="trial-badge">14-Day Free Trial</div>
-                    <div class="price">$97<span>/month</span></div>
-                    <ul class="features-list">
-                        <li>Daily FEMA brief (email only)</li>
-                        <li>5 custom NAICS codes</li>
-                        <li>Deadline alerts (email)</li>
-                        <li>Basic competitor intel</li>
-                        <li>1 user account</li>
+                    <p class="plan-desc">For solo BD professionals getting started with GovCon intelligence.</p>
+                    <div class="price-row">
+                        <span class="price-amount">$97</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <p class="trial-note">14-day free trial included</p>
+                    <ul class="plan-features">
+                        <li><span class="check-icon">&#10003;</span> Daily FEMA brief (email only)</li>
+                        <li><span class="check-icon">&#10003;</span> 5 custom NAICS codes</li>
+                        <li><span class="check-icon">&#10003;</span> Deadline alerts (email)</li>
+                        <li><span class="check-icon">&#10003;</span> Basic competitor intel</li>
+                        <li><span class="check-icon">&#10003;</span> 1 user account</li>
                     </ul>
-                    <a href="https://buy.stripe.com/bJe7sM0sQ39M7Yn6FD38407" class="buy-button">Start Free Trial</a>
+                    <a href="https://buy.stripe.com/bJe7sM0sQ39M7Yn6FD38407" class="plan-btn outline">Start Free Trial</a>
                 </div>
 
                 <div class="pricing-card featured">
+                    <div class="popular-badge">Most Popular</div>
                     <h3>Professional</h3>
-                    <div class="trial-badge">14-Day Free Trial</div>
-                    <div class="price">$197<span>/month</span></div>
-                    <ul class="features-list">
-                        <li>Daily FEMA brief (Slack + email)</li>
-                        <li>All 13 NAICS codes + unlimited keywords</li>
-                        <li>48-hour deadline warnings</li>
-                        <li>Full competitor intel + teaming suggestions</li>
-                        <li>State EMA contact auto-lookup</li>
-                        <li>FEMA spending trends dashboard</li>
-                        <li>Bid checklist generator</li>
-                        <li>3 user accounts</li>
+                    <p class="plan-desc">For growing GovCon teams that need full AI-powered intelligence.</p>
+                    <div class="price-row">
+                        <span class="price-amount">$197</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <p class="trial-note">14-day free trial included</p>
+                    <ul class="plan-features">
+                        <li><span class="check-icon">&#10003;</span> Daily brief (Slack + email)</li>
+                        <li><span class="check-icon">&#10003;</span> All 13 NAICS codes + custom keywords</li>
+                        <li><span class="check-icon">&#10003;</span> 48-hour deadline warnings</li>
+                        <li><span class="check-icon">&#10003;</span> Full competitor intel + teaming</li>
+                        <li><span class="check-icon">&#10003;</span> State EMA contact auto-lookup</li>
+                        <li><span class="check-icon">&#10003;</span> FEMA spending trends</li>
+                        <li><span class="check-icon">&#10003;</span> Bid checklist generator</li>
+                        <li><span class="check-icon">&#10003;</span> 3 user accounts</li>
                     </ul>
-                    <a href="https://buy.stripe.com/4gMbJ28Zm39M6UjbZX38406" class="buy-button">Start Free Trial</a>
+                    <a href="https://buy.stripe.com/4gMbJ28Zm39M6UjbZX38406" class="plan-btn primary">Start Free Trial</a>
                 </div>
 
                 <div class="pricing-card">
                     <h3>Enterprise</h3>
-                    <div class="trial-badge">14-Day Free Trial</div>
-                    <div class="price">$397<span>/month</span></div>
-                    <ul class="features-list">
-                        <li>Everything in Professional</li>
-                        <li>Custom integrations (CRM, Teams, etc.)</li>
-                        <li>Dedicated FEMA market analyst</li>
-                        <li>Unlimited users</li>
-                        <li>API access</li>
-                        <li>Quarterly strategy calls</li>
+                    <p class="plan-desc">For established contractors who want every edge in the market.</p>
+                    <div class="price-row">
+                        <span class="price-amount">$397</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <p class="trial-note">14-day free trial included</p>
+                    <ul class="plan-features">
+                        <li><span class="check-icon">&#10003;</span> Everything in Professional</li>
+                        <li><span class="check-icon">&#10003;</span> Custom integrations (CRM, Teams)</li>
+                        <li><span class="check-icon">&#10003;</span> Dedicated FEMA market analyst</li>
+                        <li><span class="check-icon">&#10003;</span> Unlimited users</li>
+                        <li><span class="check-icon">&#10003;</span> API access</li>
+                        <li><span class="check-icon">&#10003;</span> Quarterly strategy calls</li>
                     </ul>
-                    <a href="https://buy.stripe.com/7sYfZi3F24dQceDggd38408" class="buy-button">Start Free Trial</a>
+                    <a href="https://buy.stripe.com/7sYfZi3F24dQceDggd38408" class="plan-btn outline">Start Free Trial</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="social-proof" id="social-proof">
+    <!-- ── Testimonials ── -->
+    <section class="testimonials" id="testimonials">
         <div class="container">
-            <h2>Trusted by FEMA-Focused Small Businesses</h2>
-            <p class="trust-badge">⭐⭐⭐⭐⭐ "We caught a $2M State EMA contract in week 2 that we would have missed." — BD Director, Emergency Response Supplier</p>
-            <div class="badges">
-                <div class="badge">🏆 Used by 40+ FEMA contractors</div>
-                <div class="badge">📊 Tracking 500+ FEMA opportunities/month</div>
-                <div class="badge">⚡ Average 3-hour time savings/week per BD staff</div>
+            <div style="text-align: center; margin-bottom: 64px;">
+                <span class="section-label">Testimonials</span>
+                <h2 class="section-title">Trusted by FEMA-Focused Teams</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"We caught a $2M State EMA contract in week 2 that we would have completely missed. The AI matching is incredibly accurate."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">BD</div>
+                        <div class="testimonial-info">
+                            <div class="name">BD Director</div>
+                            <div class="role">Emergency Response Supplier</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"The 48-hour deadline alerts alone have saved us twice. We used to miss bids regularly. Now we submit early every time."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">PM</div>
+                        <div class="testimonial-info">
+                            <div class="name">Program Manager</div>
+                            <div class="role">Disaster Logistics Firm</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <p class="testimonial-text">"Replaced 3 hours of daily SAM.gov searching with a single Slack message. Our BD team now spends time on proposals, not hunting."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">VP</div>
+                        <div class="testimonial-info">
+                            <div class="name">VP of Business Dev</div>
+                            <div class="role">Medical Equipment Contractor</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
+    <!-- ── FAQ ── -->
     <section class="faq" id="faq">
         <div class="container">
-            <h2>Frequently Asked Questions</h2>
+            <div style="text-align: center; margin-bottom: 64px;">
+                <span class="section-label">FAQ</span>
+                <h2 class="section-title">Frequently Asked Questions</h2>
+            </div>
             <div class="faq-grid">
                 <div class="faq-item">
-                    <h3>Do I need to be SAM.gov registered?</h3>
-                    <p>No! We monitor SAM.gov for you. You just need to be pursuing FEMA/State EMA contracts in our supported NAICS codes. (Though you'll need SAM registration to actually bid.)</p>
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                        <h3>Do I need to be SAM.gov registered?</h3>
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>No! We monitor SAM.gov for you. You just need to be pursuing FEMA/State EMA contracts in our supported NAICS codes. You'll need SAM registration to actually bid, but GovCon works independently.</p>
+                    </div>
                 </div>
                 <div class="faq-item">
-                    <h3>Can I add my own keywords beyond the 26 you track?</h3>
-                    <p>Yes (Professional plan). Add terms like "disaster response," "PPE supply," "emergency logistics," or your proprietary product names.</p>
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                        <h3>Can I add my own keywords beyond the 26 you track?</h3>
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, on the Professional plan and above. Add terms like "disaster response," "PPE supply," "emergency logistics," or your proprietary product names for even more targeted results.</p>
+                    </div>
                 </div>
                 <div class="faq-item">
-                    <h3>Is this only for federal FEMA contracts?</h3>
-                    <p>No! We also track State Emergency Management Agencies (EMAs) and their procurement portals. Many states publish opportunities separately from SAM.gov—we monitor those too.</p>
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                        <h3>Is this only for federal FEMA contracts?</h3>
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>No! We also track State Emergency Management Agencies (EMAs) and their procurement portals. Many states publish opportunities separately from SAM.gov, and our AI monitors those too.</p>
+                    </div>
                 </div>
                 <div class="faq-item">
-                    <h3>What if I'm not sure which NAICS codes apply to me?</h3>
-                    <p>During onboarding, we'll review your products/services and recommend the best 5–13 codes. You can always adjust later.</p>
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                        <h3>What if I'm not sure which NAICS codes apply to me?</h3>
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>During onboarding, we'll review your products and services and recommend the best 5-13 codes for your business. You can always adjust your profile later as your focus evolves.</p>
+                    </div>
                 </div>
                 <div class="faq-item">
-                    <h3>How does the 14-day free trial work?</h3>
-                    <p>Sign up, connect your Slack/email, and start receiving daily briefs immediately. No credit card required. Cancel anytime before day 14 with zero charges.</p>
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                        <h3>How does the 14-day free trial work?</h3>
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Sign up, connect your Slack or email, and start receiving daily briefs immediately. No credit card required upfront. Cancel anytime before day 14 with zero charges.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" onclick="this.parentElement.classList.toggle('active')">
+                        <h3>How accurate is the AI matching?</h3>
+                        <span class="faq-toggle">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Our AI uses natural language processing to understand RFP requirements beyond simple keyword matching. It considers your NAICS codes, past pursuits, agency preferences, and contract size range to deliver highly relevant matches.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>GovCon Command Center</h4>
-                <p>AI-powered government contracting intelligence for small-to-midsize FEMA-focused teams.</p>
-            </div>
-            <div class="footer-section">
-                <h4>Product</h4>
-                <a href="#features">Features</a>
-                <a href="#pricing">Pricing</a>
-                <a href="#faq">FAQ</a>
-            </div>
-            <div class="footer-section">
-                <h4>Company</h4>
-                <a href="#social-proof">Testimonials</a>
-                <a href="mailto:info@trapiermanagement.com">Contact</a>
-            </div>
-            <div class="footer-section">
-                <h4>Legal</h4>
-                <a href="/privacy.html">Privacy Policy</a>
-                <a href="/terms.html">Terms of Service</a>
-                <a href="/acceptable-use.html">Acceptable Use Policy</a>
+    <!-- ── Final CTA ── -->
+    <section class="final-cta">
+        <div class="container">
+            <h2>Ready to Win More<br><span class="gradient-text">Government Contracts?</span></h2>
+            <p>Join 40+ FEMA-focused contractors who use AI to find opportunities faster, never miss deadlines, and outpace the competition.</p>
+            <div class="hero-actions">
+                <a href="#pricing" class="btn-primary">Start Your 14-Day Free Trial <span>&#8594;</span></a>
             </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 GovCon Command Center. All rights reserved.</p>
+    </section>
+
+    <!-- ── Footer ── -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="nav-logo" style="margin-bottom: 4px;">
+                        <div class="nav-logo-icon">G</div>
+                        <div class="nav-logo-text">Gov<span>Con</span></div>
+                    </a>
+                    <p>AI-powered government contracting intelligence for small-to-midsize FEMA-focused teams.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#faq">FAQ</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <a href="#testimonials">Testimonials</a>
+                    <a href="mailto:info@trapiermanagement.com">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="/privacy.html">Privacy Policy</a>
+                    <a href="/terms.html">Terms of Service</a>
+                    <a href="/acceptable-use.html">Acceptable Use</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 GovCon. Trapier Management LLC. All rights reserved.</p>
+            </div>
         </div>
     </footer>
 
