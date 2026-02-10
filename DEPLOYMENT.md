@@ -11,9 +11,14 @@ This repository contains the **GovCon AI** landing page - the AI-powered governm
 
 ### Deploy to Vercel
 
-1. Connect the GitHub repo (`Haroldtrapier/Govcon`) to Vercel
-2. Auto-deploys on push to `main`
-3. Or manually: `vercel --prod`
+Deployments are handled via GitHub Actions (`.github/workflows/deploy.yml`).
+
+**Required GitHub Secrets:**
+- `VERCEL_TOKEN` - From Vercel Dashboard > Settings > Tokens
+- `VERCEL_ORG_ID` - From Vercel project > Settings > General
+- `VERCEL_PROJECT_ID` - From Vercel project > Settings > General
+
+Every push to `main` triggers an automatic production deployment.
 
 ### Vercel Configuration
 
