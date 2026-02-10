@@ -17,12 +17,32 @@ jobs:
       - name: Install Vercel CLI
         run: npm install -g vercel@latest
 
-      - name: Deploy to Vercel Production
+      - name: Link and Deploy to Vercel
         run: |
           TOKEN="${{ secrets.VERCEL_TOKEN }}${{ vars.VERCEL_TOKEN }}"
-          if [ -z "$TOKEN" ]; then
-            echo "ERROR: No VERCEL_TOKEN found in secrets or variables"
-            exit 1
-          fi
-          echo "Token found, deploying..."
+
+          # Get user/team ID from Vercel API
+          USER_INFO=$(curl -s -H "Authorization: Bearer $TOKEN" https://api.vercel.com/v2/user)
+          USER_ID=$(echo "$USER_INFO" | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8');const j=JSON.parse(d);console.log(j.user?.id||'')")
+
+          echo "User ID found: ${USER_ID:0:8}..."
+
+          # Check for team context
+          TEAMS_INFO=$(curl -s -H "Authorization: Bearer $TOKEN" https://api.vercel.com/v2/teams)
+          TEAM_ID=$(echo "$TEAMS_INFO" | node -e "const d=require('fs').readFileSync('/dev/stdin','utf8');const j=JSON.parse(d);const t=j.teams?.[0];console.log(t?.id||'')")
+
+          # Use team ID if available, otherwise user ID
+          ORG_ID="${TEAM_ID:-$USER_ID}"
+          echo "Org ID: ${ORG_ID:0:8}..."
+
+          # Create .vercel directory with project link
+          mkdir -p .vercel
+          cat > .vercel/project.json << EOF
+          {
+            "orgId": "$ORG_ID",
+            "projectId": "${{ vars.VERCEL_PROJECT_ID }}"
+          }
+          EOF
+
+          echo "Linked to project, deploying..."
           vercel deploy --prod --yes --token="$TOKEN"
