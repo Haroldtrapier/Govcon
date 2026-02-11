@@ -459,6 +459,9 @@
         .price-row { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
         .price-amount { font-size: 3.2rem; font-weight: 900; letter-spacing: -0.04em; }
         .price-period { font-size: 1rem; color: var(--text-dim); }
+        .price-tag { display: flex; align-items: baseline; gap: 4px; margin-bottom: 8px; }
+        .price-tag .price { font-size: 3.2rem; font-weight: 900; letter-spacing: -0.04em; }
+        .price-tag .per-month { font-size: 1rem; color: var(--text-dim); }
         .trial-note { font-size: 0.8rem; color: var(--green); font-weight: 500; margin-bottom: 32px; }
         .plan-features { list-style: none; margin-bottom: 32px; }
         .plan-features li {
@@ -855,7 +858,7 @@
                         <li>Basic competitor intel</li>
                         <li>1 user account</li>
                     </ul>
-                    <button class="cta-btn" onclick="window.location.href='mailto:info@trapiermanagement.com?subject=Start Free Trial - Starter Plan ($97/mo)&body=Hi, I'd like to start a 14-day free trial of the Starter plan.'">Start Free Trial</button>
+                    <a class="plan-btn outline" href="mailto:info@trapiermanagement.com?subject=Start%20Free%20Trial%20-%20Starter%20Plan%20(%2497%2Fmo)&body=Hi%2C%20I%20would%20like%20to%20start%20a%2014-day%20free%20trial%20of%20the%20Starter%20plan.">Start Free Trial</a>
                 </div>
 
                 <!-- Professional -->
@@ -878,7 +881,7 @@
                         <li>Bid checklist</li>
                         <li>3 user accounts</li>
                     </ul>
-                    <button class="cta-btn" onclick="window.location.href='mailto:info@trapiermanagement.com?subject=Start Free Trial - Professional Plan ($197/mo)&body=Hi, I'd like to start a 14-day free trial of the Professional plan.'">Start Free Trial</button>
+                    <a class="plan-btn primary" href="mailto:info@trapiermanagement.com?subject=Start%20Free%20Trial%20-%20Professional%20Plan%20(%24197%2Fmo)&body=Hi%2C%20I%20would%20like%20to%20start%20a%2014-day%20free%20trial%20of%20the%20Professional%20plan.">Start Free Trial</a>
                 </div>
 
                 <!-- Enterprise -->
@@ -898,7 +901,7 @@
                         <li>API access</li>
                         <li>Quarterly strategy calls</li>
                     </ul>
-                    <button class="cta-btn" onclick="window.location.href='mailto:info@trapiermanagement.com?subject=Start Free Trial - Enterprise Plan ($397/mo)&body=Hi, I'd like to start a 14-day free trial of the Enterprise plan.'">Start Free Trial</button>
+                    <a class="plan-btn outline" href="mailto:info@trapiermanagement.com?subject=Start%20Free%20Trial%20-%20Enterprise%20Plan%20(%24397%2Fmo)&body=Hi%2C%20I%20would%20like%20to%20start%20a%2014-day%20free%20trial%20of%20the%20Enterprise%20plan.">Start Free Trial</a>
                 </div>
             </div>
 
@@ -934,7 +937,7 @@
                         <li>Contract history insights</li>
                         <li>Priority alerts for high-match contracts</li>
                     </ul>
-                    <button class="cta-btn" style="background: var(--accent);" onclick="window.location.href='mailto:info@trapiermanagement.com?subject=GovCon AI Pro - Get Started ($497/mo)&body=Hi, I'd like to learn more about the GovCon AI Pro plan.'">Get Started</button>
+                    <a class="plan-btn primary" href="mailto:info@trapiermanagement.com?subject=GovCon%20AI%20Pro%20-%20Get%20Started%20(%24497%2Fmo)&body=Hi%2C%20I%20would%20like%20to%20learn%20more%20about%20the%20GovCon%20AI%20Pro%20plan.">Get Started</a>
                 </div>
 
                 <!-- FEMA Command Center -->
@@ -958,7 +961,7 @@
                         <li>Real-time emergency procurement alerts</li>
                         <li>Regional market intelligence</li>
                     </ul>
-                    <button class="cta-btn" style="background: var(--accent);" onclick="window.location.href='mailto:info@trapiermanagement.com?subject=FEMA Command Center - Get Started ($797/mo)&body=Hi, I'd like to learn more about the FEMA Command Center plan.'">Get Started</button>
+                    <a class="plan-btn primary" href="mailto:info@trapiermanagement.com?subject=FEMA%20Command%20Center%20-%20Get%20Started%20(%24797%2Fmo)&body=Hi%2C%20I%20would%20like%20to%20learn%20more%20about%20the%20FEMA%20Command%20Center%20plan.">Get Started</a>
                 </div>
 
                 <!-- Gov Ops Center -->
@@ -982,7 +985,7 @@
                         <li>Performance metrics & reporting</li>
                         <li>White-label options available</li>
                     </ul>
-                    <button class="cta-btn" style="background: var(--accent);" onclick="window.location.href='mailto:info@trapiermanagement.com?subject=Gov Ops Center - Get Started ($1,497/mo)&body=Hi, I'd like to learn more about the Gov Ops Center plan.'">Get Started</button>
+                    <a class="plan-btn primary" href="mailto:info@trapiermanagement.com?subject=Gov%20Ops%20Center%20-%20Get%20Started%20(%241%2C497%2Fmo)&body=Hi%2C%20I%20would%20like%20to%20learn%20more%20about%20the%20Gov%20Ops%20Center%20plan.">Get Started</a>
                 </div>
 
                 <!-- Emergency Procurement Hub -->
@@ -1006,7 +1009,7 @@
                         <li>Expedited proposal support</li>
                         <li>Direct agency contact intelligence</li>
                     </ul>
-                    <button class="cta-btn" style="background: var(--accent);" onclick="window.location.href='mailto:info@trapiermanagement.com?subject=Emergency Procurement Hub - Get Started ($2,997/mo)&body=Hi, I'd like to learn more about the Emergency Procurement Hub plan.'">Get Started</button>
+                    <a class="plan-btn primary" href="mailto:info@trapiermanagement.com?subject=Emergency%20Procurement%20Hub%20-%20Get%20Started%20(%242%2C997%2Fmo)&body=Hi%2C%20I%20would%20like%20to%20learn%20more%20about%20the%20Emergency%20Procurement%20Hub%20plan.">Get Started</a>
                 </div>
             </div>
 
