@@ -834,157 +834,186 @@
         <div class="container">
             <div style="text-align: center; margin-bottom: 64px;">
                 <span class="section-label fade-up">Pricing</span>
-                <h2 class="section-title fade-up" style="max-width: 100%;">Simple, Transparent Plans</h2>
-                <p class="section-sub fade-up" style="margin: 16px auto 0;">Every plan includes a 14-day free trial. No credit card required.</p>
+                <h2 class="section-title fade-up" style="max-width: 100%;">Choose Your Plan</h2>
+                <p class="section-sub fade-up" style="margin: 16px auto 0;">Standalone plans or bundle with base tiers for 20% savings. 14-day free trial on all plans.</p>
             </div>
+
             <div class="pricing-grid">
+                <!-- Starter -->
                 <div class="pricing-card fade-up">
                     <h3>Starter</h3>
                     <p class="plan-desc">For solo BD professionals getting started with GovCon intelligence.</p>
-                    <div class="price-row">
-                        <span class="price-amount">$97</span>
-                        <span class="price-period">/month</span>
+                    <div class="price-tag">
+                        <span class="price">$97</span>
+                        <span class="per-month">/month</span>
                     </div>
-                    <p class="trial-note">14-day free trial included</p>
+                    <p style="font-size: 0.8rem; color: var(--accent); margin: 12px 0 24px;">14-day free trial included</p>
                     <ul class="plan-features">
-                        <li><span class="check-icon">&#10003;</span> Daily FEMA brief (email only)</li>
-                        <li><span class="check-icon">&#10003;</span> 5 custom NAICS codes</li>
-                        <li><span class="check-icon">&#10003;</span> Deadline alerts (email)</li>
-                        <li><span class="check-icon">&#10003;</span> Basic competitor intel</li>
-                        <li><span class="check-icon">&#10003;</span> 1 user account</li>
+                        <li>Daily FEMA brief (email only)</li>
+                        <li>5 custom NAICS codes</li>
+                        <li>Deadline alerts (email)</li>
+                        <li>Basic competitor intel</li>
+                        <li>1 user account</li>
                     </ul>
-                    <a href="https://buy.stripe.com/bJe7sM0sQ39M7Yn6FD38407" class="plan-btn outline">Start Free Trial</a>
+                    <button class="cta-btn">Start Free Trial</button>
                 </div>
 
-            <!-- Premium Add-Ons -->
-            <div style="text-align: center; margin: 80px 0 64px;">
-                <h2 class="section-title fade-up">Premium Add-Ons</h2>
-                <p class="section-sub fade-up" style="margin: 16px auto 0; max-width: 600px;">Enhance your base plan with specialized modules. Requires an active base tier subscription.</p>
-            </div>
-
-            <div class="pricing-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
-                <!-- GovCon AI Pro -->
-                <div class="pricing-card fade-up">
-                    <div class="pricing-header">
-                        <h3>🎯 GovCon AI Pro</h3>
-                        <p class="pricing-desc">AI-powered SAM.gov opportunity tracking with intelligent scoring.</p>
-                    </div>
-                    <div class="pricing-price">
-                        <span class="price">$497</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> SAM.gov opportunity tracking</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> AI-powered match scoring</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Daily opportunity alerts</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> NAICS code recommendations</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Proposal writing assistance</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Add to Plan</a>
-                </div>
-
-                <!-- FEMA Command Center -->
-                <div class="pricing-card fade-up" style="animation-delay: 0.1s;">
-                    <div class="pricing-header">
-                        <h3>🚨 FEMA Command Center</h3>
-                        <p class="pricing-desc">Real-time disaster declarations and grant opportunity tracking.</p>
-                    </div>
-                    <div class="pricing-price">
-                        <span class="price">$797</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Disaster declaration monitoring</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Grant opportunity alerts</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Real-time emergency updates</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Eligibility assessment tools</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Application guidance</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Add to Plan</a>
-                </div>
-
-                <!-- Gov Ops Center -->
-                <div class="pricing-card fade-up" style="animation-delay: 0.2s;">
-                    <div class="pricing-header">
-                        <h3>🏛️ Gov Ops Center</h3>
-                        <p class="pricing-desc">Enterprise government operations and mission management.</p>
-                    </div>
-                    <div class="pricing-price">
-                        <span class="price">$1,497</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Multi-agency mission tracking</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Vendor coordination tools</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Budget management</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Priority systems</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Multi-state operations</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Add to Plan</a>
-                </div>
-
-                <!-- Emergency Procurement Hub -->
-                <div class="pricing-card fade-up" style="animation-delay: 0.3s;">
-                    <div class="pricing-header">
-                        <h3>🔥 Procurement Hub</h3>
-                        <p class="pricing-desc">Emergency procurement marketplace connecting agencies and suppliers.</p>
-                    </div>
-                    <div class="pricing-price">
-                        <span class="price">$2,997</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Agency request posting</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Supplier bidding system</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Urgency-based matching</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Real-time notifications</li>
-                        <li><svg class="check-icon"><use href="#check-icon"></use></svg> Contract management</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline">Add to Plan</a>
-                </div>
-            </div>
-
-
+                <!-- Professional -->
                 <div class="pricing-card featured fade-up">
                     <div class="popular-badge">Most Popular</div>
                     <h3>Professional</h3>
                     <p class="plan-desc">For growing GovCon teams that need full AI-powered intelligence.</p>
-                    <div class="price-row">
-                        <span class="price-amount">$197</span>
-                        <span class="price-period">/month</span>
+                    <div class="price-tag">
+                        <span class="price">$197</span>
+                        <span class="per-month">/month</span>
                     </div>
-                    <p class="trial-note">14-day free trial included</p>
+                    <p style="font-size: 0.8rem; color: var(--accent); margin: 12px 0 24px;">14-day free trial included</p>
                     <ul class="plan-features">
-                        <li><span class="check-icon">&#10003;</span> Daily brief (Slack + email)</li>
-                        <li><span class="check-icon">&#10003;</span> All 13 NAICS codes + custom keywords</li>
-                        <li><span class="check-icon">&#10003;</span> 48-hour deadline warnings</li>
-                        <li><span class="check-icon">&#10003;</span> Full competitor intel + teaming</li>
-                        <li><span class="check-icon">&#10003;</span> State EMA contact auto-lookup</li>
-                        <li><span class="check-icon">&#10003;</span> FEMA spending trends</li>
-                        <li><span class="check-icon">&#10003;</span> Bid checklist generator</li>
-                        <li><span class="check-icon">&#10003;</span> 3 user accounts</li>
+                        <li>Daily brief (Slack + email)</li>
+                        <li>All 13 NAICS codes + custom keywords</li>
+                        <li>48-hour deadline warnings</li>
+                        <li>Full competitor intel + teaming</li>
+                        <li>State EMA contact auto-lookup</li>
+                        <li>FEMA spending trends</li>
+                        <li>Bid checklist</li>
+                        <li>3 user accounts</li>
                     </ul>
-                    <a href="https://buy.stripe.com/4gMbJ28Zm39M6UjbZX38406" class="plan-btn primary">Start Free Trial</a>
+                    <button class="cta-btn">Start Free Trial</button>
                 </div>
 
+                <!-- Enterprise -->
                 <div class="pricing-card fade-up">
                     <h3>Enterprise</h3>
                     <p class="plan-desc">For established contractors who want every edge in the market.</p>
-                    <div class="price-row">
-                        <span class="price-amount">$397</span>
-                        <span class="price-period">/month</span>
+                    <div class="price-tag">
+                        <span class="price">$397</span>
+                        <span class="per-month">/month</span>
                     </div>
-                    <p class="trial-note">14-day free trial included</p>
+                    <p style="font-size: 0.8rem; color: var(--accent); margin: 12px 0 24px;">14-day free trial included</p>
                     <ul class="plan-features">
-                        <li><span class="check-icon">&#10003;</span> Everything in Professional</li>
-                        <li><span class="check-icon">&#10003;</span> Custom integrations (CRM, Teams)</li>
-                        <li><span class="check-icon">&#10003;</span> Dedicated FEMA market analyst</li>
-                        <li><span class="check-icon">&#10003;</span> Unlimited users</li>
-                        <li><span class="check-icon">&#10003;</span> API access</li>
-                        <li><span class="check-icon">&#10003;</span> Quarterly strategy calls</li>
+                        <li>Everything in Professional</li>
+                        <li>Custom integrations (CRM, Teams)</li>
+                        <li>Dedicated FEMA market analyst</li>
+                        <li>Unlimited users</li>
+                        <li>API access</li>
+                        <li>Quarterly strategy calls</li>
                     </ul>
-                    <a href="https://buy.stripe.com/7sYfZi3F24dQceDggd38408" class="plan-btn outline">Start Free Trial</a>
+                    <button class="cta-btn">Start Free Trial</button>
                 </div>
+            </div>
+
+            <!-- Premium Add-Ons Section -->
+            <div style="text-align: center; margin: 80px 0 40px;">
+                <h3 class="section-title" style="font-size: 1.8rem; margin-bottom: 16px;">🎯 Premium Solutions</h3>
+                <p class="section-sub" style="margin: 0 auto; max-width: 700px;">
+                    Standalone specialized modules or add to any base tier with <strong style="color: var(--accent);">20% bundle savings</strong>
+                </p>
+            </div>
+
+            <div class="pricing-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 40px;">
+
+                <!-- GovCon AI Pro -->
+                <div class="pricing-card fade-up" style="border: 2px solid rgba(255, 71, 87, 0.3); background: linear-gradient(135deg, rgba(255, 71, 87, 0.05), transparent);">
+                    <div class="pricing-header">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">🎯</div>
+                        <h3>GovCon AI Pro</h3>
+                        <p class="plan-desc">AI-powered SAM.gov opportunity tracking with intelligent scoring.</p>
+                    </div>
+                    <div class="price-tag">
+                        <span class="price">$497</span>
+                        <span class="per-month">/month</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--accent); margin: 12px 0 20px; font-weight: 600;">
+                        💡 Bundle & Save: $398/mo (20% off)
+                    </p>
+                    <ul class="plan-features">
+                        <li>SAM.gov opportunity tracking</li>
+                        <li>AI-powered match scoring</li>
+                        <li>Automated bid/no-bid analysis</li>
+                        <li>Contract history insights</li>
+                        <li>Priority alerts for high-match contracts</li>
+                    </ul>
+                    <button class="cta-btn" style="background: var(--accent);">Get Started</button>
+                </div>
+
+                <!-- FEMA Command Center -->
+                <div class="pricing-card fade-up" style="border: 2px solid rgba(255, 71, 87, 0.3); background: linear-gradient(135deg, rgba(255, 71, 87, 0.05), transparent);">
+                    <div class="pricing-header">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">🚨</div>
+                        <h3>FEMA Command Center</h3>
+                        <p class="plan-desc">Real-time disaster declarations and grant opportunity tracking.</p>
+                    </div>
+                    <div class="price-tag">
+                        <span class="price">$797</span>
+                        <span class="per-month">/month</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--accent); margin: 12px 0 20px; font-weight: 600;">
+                        💡 Bundle & Save: $638/mo (20% off)
+                    </p>
+                    <ul class="plan-features">
+                        <li>Disaster declaration monitoring</li>
+                        <li>Grant opportunity alerts</li>
+                        <li>FEMA spend-down tracking</li>
+                        <li>Real-time emergency procurement alerts</li>
+                        <li>Regional market intelligence</li>
+                    </ul>
+                    <button class="cta-btn" style="background: var(--accent);">Get Started</button>
+                </div>
+
+                <!-- Gov Ops Center -->
+                <div class="pricing-card fade-up" style="border: 2px solid rgba(255, 71, 87, 0.3); background: linear-gradient(135deg, rgba(255, 71, 87, 0.05), transparent);">
+                    <div class="pricing-header">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">🏛️</div>
+                        <h3>Gov Ops Center</h3>
+                        <p class="plan-desc">Enterprise government operations and compliance management.</p>
+                    </div>
+                    <div class="price-tag">
+                        <span class="price">$1,497</span>
+                        <span class="per-month">/month</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--accent); margin: 12px 0 20px; font-weight: 600;">
+                        💡 Bundle & Save: $1,198/mo (20% off)
+                    </p>
+                    <ul class="plan-features">
+                        <li>Multi-agency contract tracking</li>
+                        <li>Vendor coordination dashboard</li>
+                        <li>Compliance automation</li>
+                        <li>Performance metrics & reporting</li>
+                        <li>White-label options available</li>
+                    </ul>
+                    <button class="cta-btn" style="background: var(--accent);">Get Started</button>
+                </div>
+
+                <!-- Emergency Procurement Hub -->
+                <div class="pricing-card fade-up" style="border: 2px solid rgba(255, 71, 87, 0.3); background: linear-gradient(135deg, rgba(255, 71, 87, 0.05), transparent);">
+                    <div class="pricing-header">
+                        <div style="font-size: 1.5rem; margin-bottom: 8px;">🔥</div>
+                        <h3>Emergency Procurement Hub</h3>
+                        <p class="plan-desc">Rapid-response procurement intelligence for emergency situations.</p>
+                    </div>
+                    <div class="price-tag">
+                        <span class="price">$2,997</span>
+                        <span class="per-month">/month</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--accent); margin: 12px 0 20px; font-weight: 600;">
+                        💡 Bundle & Save: $2,398/mo (20% off)
+                    </p>
+                    <ul class="plan-features">
+                        <li>Real-time emergency contract alerts</li>
+                        <li>Rapid deployment opportunity matching</li>
+                        <li>24/7 crisis procurement monitoring</li>
+                        <li>Expedited proposal support</li>
+                        <li>Direct agency contact intelligence</li>
+                    </ul>
+                    <button class="cta-btn" style="background: var(--accent);">Get Started</button>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 60px; padding: 24px; background: rgba(255,71,87,0.05); border-radius: 12px; border: 1px solid rgba(255,71,87,0.2);">
+                <p style="font-size: 1rem; margin: 0; line-height: 1.6;">
+                    🎁 <strong>Bundle Discount:</strong> Add any premium plan to a base tier and automatically save 20%<br>
+                    <span style="font-size: 0.9rem; color: var(--text-dim);">All plans include 14-day free trial • No credit card required • Cancel anytime</span>
+                </p>
             </div>
         </div>
     </section>
