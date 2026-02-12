@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GovCon Command Center - Onboarding</title>
+    <title>GovCon AI - Onboarding</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -12,37 +15,41 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #06080f;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
+            -webkit-font-smoothing: antialiased;
         }
         
         .container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: linear-gradient(180deg, #0d1117, rgba(13, 17, 23, 0.8));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.5);
             max-width: 700px;
             width: 100%;
-            padding: 40px;
+            padding: 48px 40px;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 36px;
         }
         
         .header h1 {
-            color: #1e3c72;
+            color: #f1f5f9;
             font-size: 28px;
+            font-weight: 800;
             margin-bottom: 10px;
+            letter-spacing: -0.02em;
         }
         
         .header p {
-            color: #666;
+            color: #94a3b8;
             font-size: 16px;
         }
         
@@ -52,7 +59,7 @@
         
         label {
             display: block;
-            color: #333;
+            color: #cbd5e1;
             font-weight: 600;
             margin-bottom: 8px;
             font-size: 14px;
@@ -63,16 +70,25 @@
         textarea {
             width: 100%;
             padding: 12px 15px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
             font-size: 15px;
+            font-family: inherit;
             transition: all 0.3s;
+            background: rgba(255,255,255,0.04);
+            color: #f1f5f9;
+        }
+        
+        input::placeholder,
+        textarea::placeholder {
+            color: #64748b;
         }
         
         input:focus,
         textarea:focus {
             outline: none;
-            border-color: #2a5298;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
         }
         
         .checkbox-group {
@@ -92,12 +108,15 @@
             height: 18px;
             margin-right: 8px;
             cursor: pointer;
+            accent-color: #3b82f6;
         }
         
         .checkbox-item label {
             margin: 0;
             font-weight: 400;
             cursor: pointer;
+            color: #94a3b8;
+            font-size: 0.9rem;
         }
         
         .radio-group {
@@ -116,19 +135,22 @@
             height: 18px;
             margin-right: 8px;
             cursor: pointer;
+            accent-color: #3b82f6;
         }
         
         .radio-item label {
             margin: 0;
             font-weight: 400;
             cursor: pointer;
+            color: #94a3b8;
         }
         
         .conditional-field {
             margin-top: 15px;
             padding: 15px;
-            background: #f8f9fa;
-            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
             display: none;
         }
         
@@ -143,37 +165,49 @@
         
         .submit-btn {
             width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 16px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
+            font-family: inherit;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
         }
         
         .submit-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(30, 60, 114, 0.3);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.45);
         }
         
         .submit-btn:disabled {
-            background: #ccc;
+            background: #334155;
+            color: #64748b;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
         
         .success-message {
             display: none;
-            background: #d4edda;
-            border: 2px solid #c3e6cb;
-            color: #155724;
-            padding: 20px;
-            border-radius: 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            color: #34d399;
+            padding: 24px;
+            border-radius: 12px;
             text-align: center;
             margin-top: 20px;
+        }
+        
+        .success-message h2 {
+            color: #34d399;
+        }
+        
+        .success-message p {
+            color: #94a3b8;
         }
         
         .success-message.show {
@@ -182,23 +216,34 @@
         
         .error-message {
             display: none;
-            background: #f8d7da;
-            border: 2px solid #f5c6cb;
-            color: #721c24;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #f87171;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: 10px;
             margin-top: 10px;
         }
         
         .error-message.show {
             display: block;
         }
+
+        small a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+        small a:hover {
+            color: #93bbfd;
+        }
+        small {
+            color: #64748b !important;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🎯 Welcome to GovCon Command Center</h1>
+            <h1>Welcome to GovCon AI</h1>
             <p>Let's customize your daily intelligence brief</p>
         </div>
         
