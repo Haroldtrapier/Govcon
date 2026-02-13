@@ -1,12 +1,8 @@
 {
-  "crons": [{
-    "path": "/api/daily-brief",
-    "schedule": "0 13 * * *"
-  }],
-  "env": {
-    "SAM_GOV_API_KEY": "@sam_gov_api_key",
-    "RESEND_API_KEY": "@resend_api_key",
-    "GOOGLE_SHEETS_URL": "@google_sheets_url",
-    "CRON_SECRET": "@cron_secret"
-  }
+  "crons": [
+    {
+      "path": "/api/daily-brief",
+      "schedule": "0 13 * * *"
+    }
+  ]
 }

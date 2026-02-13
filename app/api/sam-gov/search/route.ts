@@ -1,46 +1,62 @@
-// app/api/sam-gov/search/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = 'edge';
-export const maxDuration = 60;
-
 interface SearchParams {
-  naicsCodes: string[];
+  naicsCodes?: string[];
   keywords?: string[];
+  postedFrom?: string;
+  postedTo?: string;
   limit?: number;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { naicsCodes, keywords = [], limit = 100 }: SearchParams = await request.json();
+    const body: SearchParams = await request.json();
+    const { naicsCodes, keywords, postedFrom, postedTo, limit = 10 } = body;
 
     if (!naicsCodes || naicsCodes.length === 0) {
-      return NextResponse.json({ error: 'NAICS codes required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'At least one NAICS code is required' },
+        { status: 400 }
+      );
     }
 
     const apiKey = process.env.SAM_GOV_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: 'SAM.gov API key not configured' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'SAM.gov API key not configured' },
+        { status: 500 }
+      );
     }
 
-    // Build SAM.gov API query
-    const naicsQuery = naicsCodes.map(code => `naicsCode:"${code}"`).join(' OR ');
-    const keywordQuery = keywords.length > 0 
-      ? ' AND (' + keywords.map(kw => `title:*${kw}* OR description:*${kw}*`).join(' OR ') + ')'
-      : '';
+    // Build query string
+    const params = new URLSearchParams();
+    params.append('api_key', apiKey);
+    params.append('limit', limit.toString());
+    params.append('ptype', 'o'); // Opportunities only
 
-    const q = `(${naicsQuery})${keywordQuery}`;
+    // Add NAICS codes
+    naicsCodes.forEach(code => params.append('ncode', code));
 
-    // Call SAM.gov API v3
-    const url = new URL('https://api.sam.gov/opportunities/v2/search');
-    url.searchParams.set('api_key', apiKey);
-    url.searchParams.set('q', q);
-    url.searchParams.set('limit', limit.toString());
-    url.searchParams.set('postedFrom', getDateDaysAgo(7)); // Last 7 days
-    url.searchParams.set('postedTo', getTodayDate());
-    url.searchParams.set('ptype', 'o,p,k,r'); // All opportunity types
+    // Add keywords if provided
+    if (keywords && keywords.length > 0) {
+      keywords.forEach(keyword => params.append('qterms', keyword));
+    }
 
-    const response = await fetch(url.toString(), {
+    // Add date filters
+    if (postedFrom) params.append('postedFrom', postedFrom);
+    if (postedTo) params.append('postedTo', postedTo);
+
+    const url = `https://api.sam.gov/opportunities/v2/search?${params.toString()}`;
+
+    console.log('[SAM.gov] Searching opportunities:', {
+      naicsCodes,
+      keywords,
+      postedFrom,
+      postedTo,
+      limit
+    });
+
+    const response = await fetch(url, {
       method: 'GET',
       headers: {
         'Accept': 'application/json'
@@ -48,47 +64,27 @@ export async function POST(request: NextRequest) {
     });
 
     if (!response.ok) {
-      throw new Error(`SAM.gov API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('[SAM.gov] API Error:', response.status, errorText);
+      return NextResponse.json(
+        { error: 'SAM.gov API request failed', details: errorText },
+        { status: response.status }
+      );
     }
 
     const data = await response.json();
 
-    // Extract and format opportunities
-    const opportunities = data.opportunitiesData?.map((opp: any) => ({
-      id: opp.noticeId,
-      title: opp.title,
-      type: opp.type,
-      agency: opp.department || opp.subtierAgency || 'Unknown',
-      naicsCode: opp.naicsCode,
-      postedDate: opp.postedDate,
-      responseDeadline: opp.responseDeadLine,
-      description: opp.description?.substring(0, 500),
-      link: `https://sam.gov/opp/${opp.noticeId}/view`,
-      solicitationNumber: opp.solicitationNumber
-    })) || [];
-
     return NextResponse.json({
       success: true,
-      count: opportunities.length,
-      opportunities,
-      query: q
+      count: data.opportunitiesData?.length || 0,
+      opportunities: data.opportunitiesData || []
     });
 
-  } catch (error: any) {
-    console.error('SAM.gov search error:', error);
+  } catch (error) {
+    console.error('[SAM.gov] Error:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to search SAM.gov' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
-}
-
-function getDateDaysAgo(days: number): string {
-  const date = new Date();
-  date.setDate(date.getDate() - days);
-  return date.toISOString().split('T')[0];
-}
-
-function getTodayDate(): string {
-  return new Date().toISOString().split('T')[0];
 }

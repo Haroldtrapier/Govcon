@@ -1,162 +1,134 @@
-// app/api/daily-brief/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-
-export const runtime = 'edge';
-export const maxDuration = 300; // 5 minutes
 
 interface Customer {
   email: string;
   name: string;
+  onboardingCompleted: boolean;
   naicsCodes: string[];
   keywords: string[];
 }
 
 export async function GET(request: NextRequest) {
   try {
-    // Verify cron secret for security
+    // Verify cron secret
     const authHeader = request.headers.get('authorization');
-    const cronSecret = process.env.CRON_SECRET || 'your-secret-here';
+    const cronSecret = process.env.CRON_SECRET;
 
-    if (authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
     }
 
-    console.log('[Daily Brief] Starting daily brief generation...');
+    console.log('[Daily Brief] Starting automation...');
 
-    // Step 1: Fetch customers from Google Sheets
-    const customers = await fetchCustomers();
-    console.log(`[Daily Brief] Found ${customers.length} customers`);
-
-    if (customers.length === 0) {
-      return NextResponse.json({ 
-        success: true, 
-        message: 'No customers to process',
-        emailsSent: 0
-      });
+    // Fetch customers from Google Sheets
+    const sheetsUrl = process.env.GOOGLE_SHEETS_URL;
+    if (!sheetsUrl) {
+      throw new Error('Google Sheets URL not configured');
     }
 
-    // Step 2: Process each customer
+    console.log('[Daily Brief] Fetching customers from Google Sheets...');
+    const sheetsResponse = await fetch(sheetsUrl);
+
+    if (!sheetsResponse.ok) {
+      throw new Error(`Failed to fetch customers: ${sheetsResponse.statusText}`);
+    }
+
+    const customersData = await sheetsResponse.json();
+    const customers: Customer[] = customersData.customers || [];
+
+    console.log(`[Daily Brief] Found ${customers.length} total customers`);
+
+    // Filter for onboarded customers
+    const onboardedCustomers = customers.filter(c => c.onboardingCompleted);
+    console.log(`[Daily Brief] Processing ${onboardedCustomers.length} onboarded customers`);
+
+    // Get today's date for filtering (LIVE data)
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0]; // YYYY-MM-DD
+
     const results = [];
-    for (const customer of customers) {
+
+    // Process each customer
+    for (const customer of onboardedCustomers) {
+      console.log(`[Daily Brief] Processing: ${customer.name} (${customer.email})`);
+
       try {
-        // Search SAM.gov for this customer's criteria
-        const searchResponse = await fetch(`${getBaseUrl()}/api/sam-gov/search`, {
+        // Search SAM.gov for this customer
+        const searchResponse = await fetch(`${request.nextUrl.origin}/api/sam-gov/search`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            naicsCodes: customer.naicsCodes,
-            keywords: customer.keywords,
-            limit: 100
+            naicsCodes: customer.naicsCodes || [],
+            keywords: customer.keywords || [],
+            postedFrom: todayStr, // TODAY'S opportunities
+            postedTo: todayStr,
+            limit: 10
           })
         });
 
         if (!searchResponse.ok) {
-          throw new Error(`Search failed: ${searchResponse.statusText}`);
+          throw new Error(`SAM.gov search failed: ${searchResponse.statusText}`);
         }
 
         const searchData = await searchResponse.json();
         const opportunities = searchData.opportunities || [];
 
-        if (opportunities.length === 0) {
-          console.log(`[Daily Brief] No opportunities for ${customer.email}`);
-          results.push({ email: customer.email, status: 'no_opportunities' });
-          continue;
-        }
+        console.log(`[Daily Brief] Found ${opportunities.length} opportunities for ${customer.name}`);
+
+        // Generate email HTML
+        const emailHtml = generateEmailHtml(customer, opportunities, today);
 
         // Send email
-        const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-        const emailResponse = await fetch(`${getBaseUrl()}/api/email/send`, {
+        const emailResponse = await fetch(`${request.nextUrl.origin}/api/email/send`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             to: customer.email,
-            subject: `GovCon Command Center - Daily Brief [${today}]`,
-            opportunities: opportunities,
-            customerName: customer.name
+            subject: `GovCon Command Center - Daily Brief [${today.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}]`,
+            html: emailHtml
           })
         });
 
         if (!emailResponse.ok) {
-          throw new Error(`Email failed: ${emailResponse.statusText}`);
+          throw new Error(`Email send failed: ${emailResponse.statusText}`);
         }
 
-        console.log(`[Daily Brief] ✓ Sent brief to ${customer.email} (${opportunities.length} opps)`);
-        results.push({ 
-          email: customer.email, 
-          status: 'sent', 
-          opportunitiesCount: opportunities.length 
+        const emailData = await temailResponse.json();
+        results.push({
+          customer: customer.email,
+          success: true,
+          opportunitiesFound: opportunities.length,
+          messageId: emailData.messageId
         });
 
-      } catch (error: any) {
-        console.error(`[Daily Brief] Error for ${customer.email}:`, error);
-        results.push({ 
-          email: customer.email, 
-          status: 'error', 
-          error: error.message 
+        console.log(`[Daily Brief] ✅ Sent to ${customer.email}`);
+
+      } catch (error) {
+        console.error(`[Daily Brief] ❌ Error for ${customer.email}:`, error);
+        results.push({
+          customer: customer.email,
+          success: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
         });
       }
     }
 
-    const successCount = results.filter(r => r.status === 'sent').length;
+    console.log('[Daily Brief] Automation completed');
 
     return NextResponse.json({
       success: true,
-      message: `Processed ${customers.length} customers, sent ${successCount} emails`,
-      emailsSent: successCount,
-      results: results
+      totalCustomers: onboardedCustomers.length,
+      results
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('[Daily Brief] Fatal error:', error);
     return NextResponse.json(
-      { error: error.message || 'Daily brief failed' },
+      { error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
-}
-
-async function fetchCustomers(): Promise<Customer[]> {
-  try {
-    const sheetsUrl = process.env.GOOGLE_SHEETS_URL;
-    if (!sheetsUrl) {
-      throw new Error('GOOGLE_SHEETS_URL not configured');
-    }
-
-    const response = await fetch(sheetsUrl);
-    if (!response.ok) {
-      throw new Error(`Google Sheets fetch failed: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-
-    // Parse Google Sheets response
-    // Expected format: { data: [ {email, name, naicsCodes, keywords}, ... ] }
-    const rows = data.data || data || [];
-
-    return rows.map((row: any) => ({
-      email: row.email || row[1],
-      name: row.name || row[0] || 'Customer',
-      naicsCodes: parseArray(row.naicsCodes || row[2]),
-      keywords: parseArray(row.keywords || row[3])
-    })).filter((c: Customer) => c.email && c.naicsCodes.length > 0);
-
-  } catch (error: any) {
-    console.error('[Fetch Customers] Error:', error);
-    return [];
-  }
-}
-
-function parseArray(value: any): string[] {
-  if (Array.isArray(value)) return value;
-  if (typeof value === 'string') {
-    return value.split(',').map(s => s.trim()).filter(Boolean);
-  }
-  return [];
-}
-
-function getBaseUrl(): string {
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  return 'http://localhost:3000';
 }
