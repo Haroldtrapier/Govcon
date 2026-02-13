@@ -600,6 +600,19 @@
             .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
             .hero-terminal { margin: 0 -8px; border-radius: var(--radius); }
         }
+    
+    .nav-logo-img {
+        height: 50px;
+        width: auto;
+        display: block;
+    }
+
+    @media (max-width: 768px) {
+        .nav-logo-img {
+            height: 40px;
+        }
+    }
+
     </style>
 </head>
 <body>
@@ -614,8 +627,7 @@
     <nav class="navbar" id="navbar">
         <div class="nav-inner">
             <a href="/" class="nav-logo">
-                <div class="nav-logo-icon">G</div>
-                <div class="nav-logo-text">Gov<span>Con</span> AI</div>
+                <img src="/assets/govcon-ai-logo.png" alt="GovCon AI Logo" class="nav-logo-img">
             </a>
             <button class="mobile-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')" aria-label="Toggle menu">&#9776;</button>
             <div class="nav-links">
