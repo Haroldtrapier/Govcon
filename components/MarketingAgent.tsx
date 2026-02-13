@@ -1,175 +1,236 @@
-'use client';
+import React, { useState } from 'react';
 
-import { useState } from 'react';
-import { Sparkles, Copy, Download, RefreshCw, Loader2 } from 'lucide-react';
-
-interface MarketingAgentProps {
-  className?: string;
-}
-
-export default function MarketingAgent({ className = '' }: MarketingAgentProps) {
-  const [prompt, setPrompt] = useState('');
-  const [contentType, setContentType] = useState('general');
+export default function MarketingAgent() {
+  const [activeTab, setActiveTab] = useState<'generate' | 'schedule' | 'analytics'>('generate');
+  const [topic, setTopic] = useState('');
   const [tone, setTone] = useState('professional');
-  const [length, setLength] = useState('medium');
-  const [generatedContent, setGeneratedContent] = useState('');
+  const [generatedPost, setGeneratedPost] = useState('');
   const [loading, setLoading] = useState(false);
-  const [provider, setProvider] = useState('anthropic');
 
-  const contentTypes = [
-    { value: 'general', label: '✨ General Content', desc: 'Any marketing copy' },
-    { value: 'email', label: '📧 Email Campaign', desc: 'Email with subject & CTA' },
-    { value: 'social', label: '📱 Social Media', desc: 'LinkedIn, Twitter, Facebook' },
-    { value: 'landing', label: '🎯 Landing Page', desc: 'High-converting page copy' },
-    { value: 'blog', label: '📝 Blog Post', desc: 'SEO-optimized article' },
-    { value: 'proposal', label: '📄 Proposal/Capability', desc: 'Professional bid content' }
-  ];
-
-  const handleGenerate = async () => {
-    if (!prompt.trim()) return;
-
+  const handleGeneratePost = async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/marketing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt,
-          contentType,
-          tone,
-          length,
-          provider
-        })
+          action: 'generate_post',
+          data: { topic, tone },
+        }),
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
-      if (data.success) {
-        setGeneratedContent(data.content);
+      if (result.success) {
+        setGeneratedPost(result.post);
       } else {
-        alert('Failed to generate content: ' + (data.error || 'Unknown error'));
+        alert('Error: ' + result.error);
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('Failed to generate content. Please try again.');
+      console.error('Generate error:', error);
+      alert('Failed to generate post');
     } finally {
       setLoading(false);
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(generatedContent);
-    alert('Copied to clipboard!');
-  };
+  const handlePostToLinkedIn = async () => {
+    if (!generatedPost) return;
 
-  const downloadContent = () => {
-    const blob = new Blob([generatedContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `govcon-marketing-${contentType}-${Date.now()}.txt`;
-    a.click();
+    alert('LinkedIn posting requires LinkedIn API integration. Post copied to clipboard!');
+    navigator.clipboard.writeText(generatedPost);
   };
 
   return (
-    <div className={`max-w-6xl mx-auto p-6 ${className}`}>
-      {/* Header */}
-      <div className="mb-8 text-center">
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Sparkles className="w-10 h-10 text-blue-600" />
-          <h1 className="text-4xl font-bold text-gray-900">AI Marketing Agent</h1>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #06080f 0%, #0d1117 100%)',
+      padding: '40px 20px',
+      fontFamily: 'Inter, sans-serif',
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <h1 style={{ 
+            fontSize: '3rem', 
+            fontWeight: 800, 
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            marginBottom: '16px'
+          }}>
+            LinkedIn Marketing Agent
+          </h1>
+          <p style={{ fontSize: '1.2rem', color: '#9ca3af' }}>
+            AI-powered LinkedIn content generation and automation
+          </p>
         </div>
-        <p className="text-lg text-gray-600">
-          Generate professional marketing content for government contractors
-        </p>
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', justifyContent: 'center' }}>
+          {['generate', 'schedule', 'analytics'].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as any)}
+              style={{
+                padding: '12px 24px',
+                background: activeTab === tab ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : '#1f2937',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '1rem',
+                fontWeight: 600,
+                textTransform: 'capitalize',
+              }}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Generate Tab */}
+        {activeTab === 'generate' && (
+          <div style={{ 
+            background: '#1f2937', 
+            padding: '32px', 
+            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
+          }}>
+            <h2 style={{ color: 'white', marginBottom: '24px' }}>Generate LinkedIn Post</h2>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ color: '#9ca3af', display: 'block', marginBottom: '8px' }}>Topic</label>
+              <input
+                type="text"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="e.g., SAM.gov opportunities, FEMA contracting"
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: '#111827',
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontSize: '1rem',
+                }}
+              />
+            </div>
+
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ color: '#9ca3af', display: 'block', marginBottom: '8px' }}>Tone</label>
+              <select
+                value={tone}
+                onChange={(e) => setTone(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  background: '#111827',
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: 'white',
+                  fontSize: '1rem',
+                }}
+              >
+                <option value="professional">Professional</option>
+                <option value="casual">Casual</option>
+                <option value="inspirational">Inspirational</option>
+                <option value="educational">Educational</option>
+              </select>
+            </div>
+
+            <button
+              onClick={handleGeneratePost}
+              disabled={loading || !topic}
+              style={{
+                padding: '16px 32px',
+                background: loading ? '#6b7280' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                fontSize: '1.1rem',
+                fontWeight: 600,
+                width: '100%',
+                marginBottom: '24px',
+              }}
+            >
+              {loading ? 'Generating...' : 'Generate Post'}
+            </button>
+
+            {generatedPost && (
+              <div>
+                <h3 style={{ color: 'white', marginBottom: '12px' }}>Generated Post:</h3>
+                <textarea
+                  value={generatedPost}
+                  onChange={(e) => setGeneratedPost(e.target.value)}
+                  style={{
+                    width: '100%',
+                    minHeight: '200px',
+                    padding: '16px',
+                    background: '#111827',
+                    border: '1px solid #374151',
+                    borderRadius: '8px',
+                    color: 'white',
+                    fontSize: '1rem',
+                    fontFamily: 'inherit',
+                    marginBottom: '16px',
+                  }}
+                />
+                <button
+                  onClick={handlePostToLinkedIn}
+                  style={{
+                    padding: '16px 32px',
+                    background: 'linear-gradient(135deg, #0077b5 0%, #005885 100%)',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '1rem',
+                    fontWeight: 600,
+                    width: '100%',
+                  }}
+                >
+                  📋 Copy to Clipboard (LinkedIn posting coming soon)
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Schedule Tab */}
+        {activeTab === 'schedule' && (
+          <div style={{ 
+            background: '#1f2937', 
+            padding: '32px', 
+            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+            textAlign: 'center'
+          }}>
+            <h2 style={{ color: 'white', marginBottom: '24px' }}>Schedule Posts</h2>
+            <p style={{ color: '#9ca3af', fontSize: '1.1rem' }}>
+              Coming soon: Schedule LinkedIn posts for optimal engagement times
+            </p>
+          </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <div style={{ 
+            background: '#1f2937', 
+            padding: '32px', 
+            borderRadius: '12px',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
+            textAlign: 'center'
+          }}>
+            <h2 style={{ color: 'white', marginBottom: '24px' }}>Analytics</h2>
+            <p style={{ color: '#9ca3af', fontSize: '1.1rem' }}>
+              Coming soon: Track your LinkedIn post performance and engagement
+            </p>
+          </div>
+        )}
       </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Input Panel */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">Content Settings</h2>
-
-          {/* Content Type */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Content Type
-            </label>
-            <select
-              value={contentType}
-              onChange={(e) => setContentType(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              {contentTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label} - {type.desc}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Prompt */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              What do you want to create?
-            </label>
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Example: Write an email campaign about our new SAM.gov opportunity search feature..."
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-              rows={4}
-            />
-          </div>
-
-          {/* Tone */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tone</label>
-            <select
-              value={tone}
-              onChange={(e) => setTone(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="professional">Professional</option>
-              <option value="friendly">Friendly</option>
-              <option value="authoritative">Authoritative</option>
-              <option value="conversational">Conversational</option>
-              <option value="urgent">Urgent</option>
-            </select>
-          </div>
-
-          {/* Length */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Length</label>
-            <select
-              value={length}
-              onChange={(e) => setLength(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="short">Short (Quick & punchy)</option>
-              <option value="medium">Medium (Standard)</option>
-              <option value="long">Long (Comprehensive)</option>
-            </select>
-          </div>
-
-          {/* Provider */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">AI Provider</label>
-            <select
-              value={provider}
-              onChange={(e) => setProvider(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="anthropic">Claude 3.5 (Recommended)</option>
-              <option value="openai">GPT-4</option>
-            </select>
-          </div>
-
-          {/* Generate Button */}
-          <button
-            onClick={handleGenerate}
-            disabled={loading || !prompt.trim()}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="wm���jם
+    </div>
+  );
+}

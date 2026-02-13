@@ -1,99 +1,146 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
-import Anthropic from '@anthropic-ai/sdk';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
-// Marketing-focused system prompt
-const MARKETING_PROMPT = `You are an expert AI Marketing Agent for GovCon Command Center.
-
-Your specialties:
-- Writing compelling copy for government contractors
-- Creating social media content (LinkedIn, Twitter, Facebook)
-- Generating email campaigns and newsletters
-- Crafting landing page copy and CTAs
-- SEO-optimized blog posts about government contracting
-- Proposal writing and capability statements
-- Case studies and success stories
-- Press releases and announcements
-
-Tone: Professional, authoritative, results-driven
-Focus: Helping small businesses win government contracts
-Always include: Clear CTAs, value propositions, credibility builders`;
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { 
-      prompt, 
-      contentType = 'general', // email, social, landing, blog, proposal
-      provider = 'anthropic', // anthropic or openai
-      tone = 'professional',
-      length = 'medium'
-    } = body;
+    const { action, data } = await request.json();
 
-    if (!prompt) {
-      return NextResponse.json(
-        { error: 'Prompt is required' },
-        { status: 400 }
-      );
+    switch (action) {
+      case 'generate_post':
+        return await generateLinkedInPost(data);
+
+      case 'schedule_post':
+        return await schedulePost(data);
+
+      case 'analyze_performance':
+        return await analyzePerformance(data);
+
+      default:
+        return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
+  } catch (error: any) {
+    console.error('Marketing Agent Error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
 
-    // Build enhanced prompt based on content type
-    const enhancedPrompt = buildMarketingPrompt(prompt, contentType, tone, length);
+async function generateLinkedInPost(data: { topic?: string; tone?: string }) {
+  const { topic = 'government contracting', tone = 'professional' } = data;
 
-    let response;
+  // Call OpenAI/Anthropic to generate LinkedIn post
+  const apiKey = process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY;
 
-    if (provider === 'anthropic') {
-      const message = await anthropic.messages.create({
+  if (!apiKey) {
+    throw new Error('AI API key not configured');
+  }
+
+  // Use OpenAI if available
+  if (process.env.OPENAI_API_KEY) {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: `You are a LinkedIn marketing expert for government contracting. Generate engaging, professional posts that drive engagement. Tone: ${tone}`,
+          },
+          {
+            role: 'user',
+            content: `Create a LinkedIn post about ${topic} for a government contracting audience. Include relevant hashtags. Max 1300 characters.`,
+          },
+        ],
+        temperature: 0.8,
+      }),
+    });
+
+    const result = await response.json();
+    const postText = result.choices[0].message.content;
+
+    return NextResponse.json({ 
+      success: true, 
+      post: postText,
+      characterCount: postText.length,
+      hashtags: extractHashtags(postText)
+    });
+  }
+
+  // Fallback to Anthropic
+  if (process.env.ANTHROPIC_API_KEY) {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
-        max_tokens: getTokenLimit(length),
+        max_tokens: 1024,
         messages: [
           {
             role: 'user',
-            content: enhancedPrompt
-          }
+            content: `You are a LinkedIn marketing expert for government contracting. Generate an engaging, ${tone} post about ${topic}. Include relevant hashtags. Max 1300 characters.`,
+          },
         ],
-        system: MARKETING_PROMPT
-      });
-
-      response = message.content[0].type === 'text' 
-        ? message.content[0].text 
-        : 'Unable to generate content';
-
-    } else {
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4',
-        max_tokens: getTokenLimit(length),
-        messages: [
-          { role: 'system', content: MARKETING_PROMPT },
-          { role: 'user', content: enhancedPrompt }
-        ],
-        temperature: 0.7
-      });
-
-      response = completion.choices[0]?.message?.content || 'Unable to generate content';
-    }
-
-    return NextResponse.json      success: true,
-      content: response,
-      contentType,
-      provider,
-      timestamp: new Date().toISOString()
+      }),
     });
 
-  } catch (error) {
-    console.error('Marketing Agent Error:', interface error);
-    return NextResponse.json
-      error: 'Failed to generate content',
-      details: error instanceof Error ? error.message : 'Unknown error'
-     status: 500
+    const result = await response.json();
+    const postText = result.content[0].text;
+
+    return NextResponse.json({ 
+      success: true, 
+      post: postText,
+      characterCount: postText.length,
+      hashtags: extractHashtags(postText)
     });
   }
+
+  throw new Error('No AI API configured');
+}
+
+async function schedulePost(data: { post: string; scheduleTime?: string }) {
+  const { post, scheduleTime } = data;
+
+  // TODO: Integrate with a scheduling service (e.g., Buffer, Hootsuite)
+  // For now, return success with mock data
+
+  return NextResponse.json({
+    success: true,
+    message: 'Post scheduled successfully',
+    scheduledFor: scheduleTime || new Date(Date.now() + 3600000).toISOString(),
+    postPreview: post.slice(0, 100) + '...',
+  });
+}
+
+async function analyzePerformance(data: { period?: string }) {
+  const { period = '7d' } = data;
+
+  // Mock performance data
+  // TODO: Integrate with LinkedIn Analytics API
+
+  return NextResponse.json({
+    success: true,
+    period,
+    metrics: {
+      posts: 12,
+      impressions: 8450,
+      engagements: 342,
+      clickThroughRate: 4.05,
+      topPerformingPost: {
+        date: new Date(Date.now() - 86400000 * 2).toISOString(),
+        impressions: 1250,
+        engagements: 89,
+      },
+    },
+  });
+}
+
+function extractHashtags(text: string): string[] {
+  const regex = /#[a-zA-Z0-9_]+/g;
+  return text.match(regex) || [];
 }
