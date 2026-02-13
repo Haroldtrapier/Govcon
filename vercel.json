@@ -1,26 +1,12 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    { "source": "/privacy", "destination": "/privacy.html" },
-    { "source": "/terms", "destination": "/terms.html" },
-    { "source": "/acceptable-use", "destination": "/acceptable-use.html" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
-      ]
-    },
-    {
-      "source": "/(.*).(html)",
-      "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
-      ]
-    }
-  ]
+  "crons": [{
+    "path": "/api/daily-brief",
+    "schedule": "0 13 * * *"
+  }],
+  "env": {
+    "SAM_GOV_API_KEY": "@sam_gov_api_key",
+    "RESEND_API_KEY": "@resend_api_key",
+    "GOOGLE_SHEETS_URL": "@google_sheets_url",
+    "CRON_SECRET": "@cron_secret"
+  }
 }
