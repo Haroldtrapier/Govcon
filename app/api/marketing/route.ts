@@ -50,7 +50,7 @@ async function generateLinkedInPost(data: { topic?: string; tone?: string }) {
           },
           {
             role: 'user',
-            content: `Create a LinkedIn post about ${topic} for a government contracting audience. Include relevant hashtags. Max 1300 characters.`,
+            content: `Create a LinkedIn post about ${topic} for a government contracting audience. Include relevant hashtags and ALWAYS end with a call-to-action and this link: https://www.govconcommandcenter.com/ Max 1300 characters.`,
           },
         ],
         temperature: 0.8,
@@ -83,7 +83,7 @@ async function generateLinkedInPost(data: { topic?: string; tone?: string }) {
         messages: [
           {
             role: 'user',
-            content: `You are a LinkedIn marketing expert for government contracting. Generate an engaging, ${tone} post about ${topic}. Include relevant hashtags. Max 1300 characters.`,
+            content: `You are a LinkedIn marketing expert for government contracting. Generate an engaging, ${tone} post about ${topic}. Include relevant hashtags and ALWAYS end with a call-to-action and this link: https://www.govconcommandcenter.com/ Max 1300 characters.`,
           },
         ],
       }),
