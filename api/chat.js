@@ -1,7 +1,6 @@
-const Anthropic = require('@anthropic-ai/sdk');
+import Anthropic from '@anthropic-ai/sdk';
 
 export default async function handler(req, res) {
-  // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -18,53 +17,44 @@ export default async function handler(req, res) {
     const { message } = req.body;
 
     if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
+      return res.status(400).json({ error: 'Message required' });
     }
 
-    // Check if API key exists
     if (!process.env.ANTHROPIC_API_KEY) {
+      console.error('ANTHROPIC_API_KEY not found');
       return res.status(500).json({ error: 'API key not configured' });
     }
 
-    // Initialize Anthropic client
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
 
-    // System prompt
-    const systemPrompt = `You are the GovCon AI Assistant. You help with government contracting questions.
-
-Key info about GovCon AI:
-- We monitor SAM.gov 24/7 for contract opportunities
-- We track FEMA and State EMA opportunities across 13 NAICS codes
-- We deliver alerts to Slack and email before competitors find them
-- Pricing starts at $49/month with a 14-day free trial
-
-Be concise and helpful. For SAM.gov data queries, say "Let me check that for you" and I'll handle it.`;
-
-    // Call Claude
     const response = await anthropic.messages.create({
       model: 'claude-3-5-sonnet-20241022',
       max_tokens: 500,
-      system: systemPrompt,
+      system: `You are GovCon AI Assistant. Help with government contracting questions. Be concise.
+
+About GovCon AI:
+- Monitors SAM.gov 24/7 for contracts
+- Tracks FEMA & State EMA opportunities  
+- Delivers alerts to Slack/email
+- Pricing: $49/month, 14-day free trial`,
       messages: [{
         role: 'user',
         content: message
       }]
     });
 
-    const assistantMessage = response.content[0].text;
-
     return res.status(200).json({
-      content: assistantMessage,
+      content: response.content[0].text,
       model: 'claude-3-5-sonnet'
     });
 
   } catch (error) {
     console.error('API Error:', error);
     return res.status(500).json({
-      error: 'AI service error',
-      message: error.message
+      error: 'AI error',
+      details: error.message
     });
   }
 }
