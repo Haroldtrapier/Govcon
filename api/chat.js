@@ -1,5 +1,3 @@
-import Anthropic from '@anthropic-ai/sdk';
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -20,41 +18,54 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Message required' });
     }
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      console.error('ANTHROPIC_API_KEY not found');
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+
+    if (!apiKey) {
+      console.error('No API key found');
       return res.status(500).json({ error: 'API key not configured' });
     }
 
-    const anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY,
+    // Call Anthropic API directly with fetch
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 500,
+        system: 'You are GovCon AI Assistant helping with government contracting. Be concise. GovCon AI monitors SAM.gov 24/7, tracks FEMA opportunities, delivers Slack/email alerts. Pricing: $49/month, 14-day trial.',
+        messages: [{
+          role: 'user',
+          content: message
+        }]
+      })
     });
 
-    const response = await anthropic.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 500,
-      system: `You are GovCon AI Assistant. Help with government contracting questions. Be concise.
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Anthropic API error:', errorData);
+      return res.status(response.status).json({ 
+        error: 'AI service error',
+        details: errorData 
+      });
+    }
 
-About GovCon AI:
-- Monitors SAM.gov 24/7 for contracts
-- Tracks FEMA & State EMA opportunities  
-- Delivers alerts to Slack/email
-- Pricing: $49/month, 14-day free trial`,
-      messages: [{
-        role: 'user',
-        content: message
-      }]
-    });
+    const data = await response.json();
+    const assistantMessage = data.content[0].text;
 
     return res.status(200).json({
-      content: response.content[0].text,
+      content: assistantMessage,
       model: 'claude-3-5-sonnet'
     });
 
   } catch (error) {
     console.error('API Error:', error);
     return res.status(500).json({
-      error: 'AI error',
-      details: error.message
+      error: 'Internal error',
+      message: error.message
     });
   }
 }
