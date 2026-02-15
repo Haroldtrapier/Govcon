@@ -1228,6 +1228,8 @@
     </footer>
 
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
         // Navbar scroll effect
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => {
@@ -1265,6 +1267,8 @@
                 document.querySelector('.nav-links').classList.remove('active');
             });
         });
+    
+    });
     </script>
 
 
@@ -1288,6 +1292,8 @@
         </div>
 
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
         function toggleChatbot() {
             const iframe = document.getElementById('ai-chatbot-iframe');
             const trigger = document.getElementById('ai-chatbot-trigger');
@@ -1320,6 +1326,8 @@
             marketingBtn.addEventListener('mouseenter', () => marketingBtn.style.transform = 'translateY(-2px)');
             marketingBtn.addEventListener('mouseleave', () => marketingBtn.style.transform = 'translateY(0)');
         });
+    
+    });
     </script>
     
     
