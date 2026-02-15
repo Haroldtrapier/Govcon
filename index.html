@@ -1228,105 +1228,36 @@
     </footer>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    // Define toggleChatbot globally so inline onclick can access it
+    function toggleChatbot() {
+        const iframe = document.getElementById('ai-chatbot-iframe');
+        const trigger = document.getElementById('ai-chatbot-trigger');
 
-        // Navbar scroll effect
-        const navbar = document.getElementById('navbar');
-        window.addEventListener('scroll', () => {
-            navbar.classList.toggle('scrolled', window.scrollY > 40);
-        });
+        if (!iframe || !trigger) {
+            console.error('Chatbot elements not found');
+            return;
+        }
 
-        // Intersection Observer for fade-up animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    // Stagger animations slightly
-                    const delay = entry.target.dataset.delay || 0;
-                    setTimeout(() => {
-                        entry.target.classList.add('visible');
-                    }, delay);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-        document.querySelectorAll('.fade-up').forEach((el, index) => {
-            // Add stagger delay for grid items
-            const parent = el.parentElement;
-            if (parent && (parent.classList.contains('steps-grid') || parent.classList.contains('features-grid') ||
-                parent.classList.contains('pricing-grid') || parent.classList.contains('testimonials-grid'))) {
-                const siblings = Array.from(parent.children);
-                el.dataset.delay = siblings.indexOf(el) * 80;
-            }
-            observer.observe(el);
-        });
-
-        // Close mobile menu on link click
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                document.querySelector('.nav-links').classList.remove('active');
-            });
-        });
-    
-    });
-    </script>
-
-
-
-    <!-- AI AGENTS INTEGRATION -->
-    <div id="ai-agents-container">
-        <!-- AI Chatbot (Fixed bottom-right) -->
-        <div id="ai-chatbot-trigger" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-            <button onclick="toggleChatbot()" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); border: none; cursor: pointer; box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4); display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">
+        if (iframe.style.display === 'none' || iframe.style.display === '') {
+            iframe.style.display = 'block';
+            trigger.querySelector('button').innerHTML = `
+                <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            `;
+        } else {
+            iframe.style.display = 'none';
+            trigger.querySelector('button').innerHTML = `
                 <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
                 </svg>
-            </button>
-        </div>
-
-        <!-- Chatbot iframe (hidden by default) -->
-        <div id="ai-chatbot-iframe" style="position: fixed; bottom: 100px; right: 20px; width: 400px; height: 600px; z-index: 9998; display: none; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.3);">
-            <iframe src="chat.html" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
-
-        </div>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        function toggleChatbot() {
-            const iframe = document.getElementById('ai-chatbot-iframe');
-            const trigger = document.getElementById('ai-chatbot-trigger');
-
-            if (iframe.style.display === 'none') {
-                iframe.style.display = 'block';
-                trigger.querySelector('button').innerHTML = `
-                    <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
-                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                    </svg>
-                `;
-            } else {
-                iframe.style.display = 'none';
-                trigger.querySelector('button').innerHTML = `
-                    <svg width="28" height="28" fill="white" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
-                    </svg>
-                `;
-            }
+            `;
         }
+    }
 
-        // Hover effects
-        document.addEventListener('DOMContentLoaded', () => {
-            const chatBtn = document.querySelector('#ai-chatbot-trigger button');
-            const marketingBtn = document.querySelector('#marketing-agent-trigger a');
-
-            chatBtn.addEventListener('mouseenter', () => chatBtn.style.transform = 'scale(1.1)');
-            chatBtn.addEventListener('mouseleave', () => chatBtn.style.transform = 'scale(1)');
-
-            marketingBtn.addEventListener('mouseenter', () => marketingBtn.style.transform = 'translateY(-2px)');
-            marketingBtn.addEventListener('mouseleave', () => marketingBtn.style.transform = 'translateY(0)');
-        });
-    
+    // Initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Chatbot initialized');
     });
     </script>
     
