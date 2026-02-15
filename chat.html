@@ -32,13 +32,9 @@
         .message.user .message-content { background: #3b82f6; color: white; border-top-right-radius: 4px; }
         #chat-input-container { padding: 16px; background: white; border-top: 1px solid #e5e7eb; }
         #chat-input-form { display: flex; gap: 8px; }
-        #chat-input {
-            flex: 1; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none;
-        }
+        #chat-input { flex: 1; padding: 12px 16px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; outline: none; }
         #chat-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-        #send-button {
-            padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s;
-        }
+        #send-button { padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: background 0.2s; }
         #send-button:hover { background: #2563eb; }
         #send-button:disabled { background: #d1d5db; cursor: not-allowed; }
         .loading { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #3b82f6; animation: bounce 1.4s infinite ease-in-out both; }
@@ -56,14 +52,7 @@
         <div id="chat-messages">
             <div class="message assistant">
                 <div class="message-avatar">🤖</div>
-                <div class="message-content">
-                    Hi! I'm your GovCon AI assistant. I can help you with:<ul style="margin-top: 8px; margin-left: 20px;">
-                        <li>SAM.gov opportunities</li>
-                        <li>NAICS codes & set-asides</li>
-                        <li>FEMA contract intelligence</li>
-                        <li>Proposal strategies</li>
-                    </ul>What would you like to know?
-                </div>
+                <div class="message-content">Hi! I'm your GovCon AI assistant. I can help you with SAM.gov opportunities, NAICS codes, FEMA contracts, and proposal strategies. What would you like to know?</div>
             </div>
         </div>
         <div id="chat-input-container">
@@ -71,7 +60,7 @@
                 <input type="text" id="chat-input" placeholder="Ask about government contracts..." autocomplete="off">
                 <button type="submit" id="send-button">Send</button>
             </form>
-            <p style="font-size: 12px; color: #6b7280; text-align: center; margin-top: 8px;">Powered by Claude AI (Real-time)</p>
+            <p style="font-size: 12px; color: #6b7280; text-align: center; margin-top: 8px;">Powered by AI</p>
         </div>
     </div>
     <script>
@@ -81,9 +70,27 @@
         const sendButton = document.getElementById('send-button');
         const chatForm = document.getElementById('chat-input-form');
 
-        if (!chatMessages || !chatInput || !sendButton || !chatForm) {
-            console.error('Chat elements not found');
-            return;
+        const demoResponses = {
+            'govcon': "GovCon AI is an intelligent platform that monitors SAM.gov 24/7, tracking government contract opportunities across NAICS codes, FEMA programs, and State EMA contracts. We deliver real-time alerts to your Slack and email before your competitors even start searching. Plans start at $49/month with a 14-day free trial.",
+            'sam': "SAM.gov is the official U.S. government system for contract opportunities. We monitor it continuously and filter opportunities based on your NAICS codes, set-asides (8(a), HUBZone, SDVOSB, WOSB), and keywords. You'll get instant notifications when relevant contracts are posted.",
+            'naics': "NAICS codes categorize business activities. For government contracting, choosing the right NAICS codes is crucial as contracts are often set aside for specific codes. We track 13 primary NAICS codes relevant to emergency management and government services.",
+            'fema': "FEMA contracts provide opportunities for disaster response, emergency management, and recovery services. We track FEMA opportunities as well as State Emergency Management Agency (EMA) contracts across all 50 states.",
+            'price': "We offer flexible pricing starting at $49/month for basic monitoring. Enterprise plans include custom NAICS tracking, dedicated Slack channels, and priority alerts. Contact support@govconcommandcenter.com for a demo! All plans include a 14-day free trial.",
+            'start': "Getting started is easy! Sign up for a free 14-day trial, connect your Slack workspace, select your NAICS codes and keywords, and start receiving real-time contract alerts. No credit card required for the trial.",
+            'how': "We continuously monitor SAM.gov, analyze new opportunities using AI, match them to your NAICS codes and keywords, then instantly alert you via Slack and email with full opportunity details before your competitors see them.",
+            'default': "I can help you with government contracting questions! Ask me about SAM.gov opportunities, NAICS codes, FEMA contracts, pricing, or how to get started with GovCon AI."
+        };
+
+        function getResponse(msg) {
+            msg = msg.toLowerCase();
+            if (msg.includes('govcon') || msg.includes('what is')) return demoResponses.govcon;
+            if (msg.includes('sam')) return demoResponses.sam;
+            if (msg.includes('naics')) return demoResponses.naics;
+            if (msg.includes('fema')) return demoResponses.fema;
+            if (msg.includes('price') || msg.includes('cost')) return demoResponses.price;
+            if (msg.includes('start') || msg.includes('trial') || msg.includes('sign')) return demoResponses.start;
+            if (msg.includes('how') || msg.includes('work')) return demoResponses.how;
+            return demoResponses.default;
         }
 
         chatForm.addEventListener('submit', async function(e) {
@@ -100,30 +107,28 @@
             sendButton.disabled = true;
             addLoadingMessage();
 
+            // Try API first, fallback to demo
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: userMessage
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMessage })
                 });
 
                 removeLoadingMessage();
 
-                if (!response.ok) {
-                    throw new Error('API error: ' + response.status);
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage('assistant', data.content);
+                } else {
+                    throw new Error('API unavailable');
                 }
-
-                const data = await response.json();
-                addMessage('assistant', data.content);
 
             } catch (error) {
                 removeLoadingMessage();
-                console.error('Chat error:', error);
-                addMessage('assistant', "I'm having trouble connecting. Please try again or contact support@govconcommandcenter.com");
+                // Use demo response as fallback
+                const demoResponse = getResponse(userMessage);
+                addMessage('assistant', demoResponse);
             } finally {
                 sendButton.disabled = false;
                 chatInput.focus();
