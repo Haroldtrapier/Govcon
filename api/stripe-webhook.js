@@ -109,7 +109,7 @@ module.exports = async (req, res) => {
   }
 
   const sig = req.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const webhookSecret = process.env.STRIPE_TRIAL_WEBHOOK_SECRET;
 
   let event;
 
