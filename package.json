@@ -1,7 +1,13 @@
 {
-  "name": "govcon-api",
+  "name": "govcon-command-center",
   "version": "1.0.0",
+  "description": "GovCon AI Command Center",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.30.0"
+    "stripe": "^14.0.0",
+    "@notionhq/client": "^2.2.15",
+    "@anthropic-ai/sdk": "^0.20.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
