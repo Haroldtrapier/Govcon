@@ -107,32 +107,38 @@
             sendButton.disabled = true;
             addLoadingMessage();
 
-            // Try API first, fallback to demo
+            // Silently try API, seamlessly fall back to demo
             try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: userMessage })
+                    body: JSON.stringify({ message: userMessage }),
+                    signal: controller.signal
                 });
 
+                clearTimeout(timeoutId);
                 removeLoadingMessage();
 
                 if (response.ok) {
                     const data = await response.json();
-                    addMessage('assistant', data.content);
-                } else {
-                    throw new Error('API unavailable');
+                    addMessage('assistant', data.content || data.message || data.response);
+                    sendButton.disabled = false;
+                    chatInput.focus();
+                    return; // Success - exit here
                 }
-
-            } catch (error) {
-                removeLoadingMessage();
-                // Use demo response as fallback
-                const demoResponse = getResponse(userMessage);
-                addMessage('assistant', demoResponse);
-            } finally {
-                sendButton.disabled = false;
-                chatInput.focus();
+            } catch (e) {
+                // API failed - silently continue to demo fallback
             }
+
+            // Use demo response (either API failed or wasn't available)
+            removeLoadingMessage();
+            const demoResponse = getResponse(userMessage);
+            addMessage('assistant', demoResponse);
+            sendButton.disabled = false;
+            chatInput.focus();
         }
 
         function addMessage(role, content) {
