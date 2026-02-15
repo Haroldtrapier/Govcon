@@ -70,7 +70,7 @@
 
         a { text-decoration: none; }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
 
         /* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Animated Grid Background ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
         .grid-bg {
@@ -171,7 +171,7 @@
             text-align: center;
             position: relative;
             z-index: 1;
-        }
+         color: white !important; }
         .hero::before {
             content: '';
             position: absolute;
@@ -203,6 +203,12 @@
             font-weight: 900; line-height: 1.08;
             margin-bottom: 28px; letter-spacing: -0.04em;
             position: relative;
+        color: white !important; }
+        .hero p {
+            color: #cbd5e1 !important;
+            font-size: 1.25rem;
+            max-width: 660px;
+            margin: 0 auto 48px;
         }
         .gradient-text {
             background: linear-gradient(135deg, var(--accent-light) 0%, var(--purple-light) 40%, var(--cyan) 80%, var(--accent-light) 100%);
@@ -602,7 +608,7 @@
             }
             .nav-links.active { display: flex; }
             .mobile-toggle { display: block; }
-            .hero { padding: 130px 24px 80px; }
+            .hero { padding: 130px 24px 80px;  color: white !important; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
             .steps-grid { grid-template-columns: 1fr; }
             .features-grid { grid-template-columns: 1fr; }
