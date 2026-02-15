@@ -1,7 +1,15 @@
 const Anthropic = require('@anthropic-ai/sdk');
 
 export default async function handler(req, res) {
-  // Only allow POST requests
+  // Enable CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -13,26 +21,31 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
+    // Check if API key exists
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return res.status(500).json({ error: 'API key not configured' });
+    }
+
     // Initialize Anthropic client
     const anthropic = new Anthropic({
       apiKey: process.env.ANTHROPIC_API_KEY,
     });
 
-    // System prompt for GovCon AI assistant
-    const systemPrompt = `You are the GovCon AI Assistant, an expert in government contracting. You help users with:
-- SAM.gov contract opportunities and how to find them
-- NAICS codes and their meanings
-- FEMA and State EMA contract opportunities
-- Government contracting strategies and proposal writing
-- Set-asides (8(a), HUBZone, SDVOSB, WOSB)
-- How GovCon AI monitoring works
+    // System prompt
+    const systemPrompt = `You are the GovCon AI Assistant. You help with government contracting questions.
 
-Be helpful, professional, and concise. If asked about pricing, mention that plans start at $49/month with a 14-day free trial.`;
+Key info about GovCon AI:
+- We monitor SAM.gov 24/7 for contract opportunities
+- We track FEMA and State EMA opportunities across 13 NAICS codes
+- We deliver alerts to Slack and email before competitors find them
+- Pricing starts at $49/month with a 14-day free trial
 
-    // Call Claude API
+Be concise and helpful. For SAM.gov data queries, say "Let me check that for you" and I'll handle it.`;
+
+    // Call Claude
     const response = await anthropic.messages.create({
       model: 'claude-3-5-sonnet-20241022',
-      max_tokens: 1024,
+      max_tokens: 500,
       system: systemPrompt,
       messages: [{
         role: 'user',
@@ -40,7 +53,6 @@ Be helpful, professional, and concise. If asked about pricing, mention that plan
       }]
     });
 
-    // Extract the text response
     const assistantMessage = response.content[0].text;
 
     return res.status(200).json({
@@ -49,9 +61,9 @@ Be helpful, professional, and concise. If asked about pricing, mention that plan
     });
 
   } catch (error) {
-    console.error('Chat API Error:', error);
+    console.error('API Error:', error);
     return res.status(500).json({
-      error: 'Failed to get response',
+      error: 'AI service error',
       message: error.message
     });
   }
