@@ -15,6 +15,59 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
+
+/* EMERGENCY: Force all content visible */
+.hero, .hero *, section, section * {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.hero {
+    color: white !important;
+    position: relative !important;
+    z-index: 100 !important;
+}
+
+.hero h1 {
+    color: white !important;
+    font-size: 3.5rem !important;
+    font-weight: 900 !important;
+    margin: 24px 0 !important;
+}
+
+.hero p {
+    color: #cbd5e1 !important;
+    font-size: 1.25rem !important;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+.hero-badge {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: white !important;
+    padding: 8px 20px !important;
+    border-radius: 100px !important;
+    display: inline-flex !important;
+    margin-bottom: 20px !important;
+}
+
+.container {
+    position: relative !important;
+    z-index: 101 !important;
+    max-width: 1200px !important;
+    margin: 0 auto !important;
+    padding: 0 24px !important;
+}
+
+/* Lower z-index of background elements */
+.grid-bg, .orb {
+    z-index: 1 !important;
+}
+
         :root {
             --bg-dark: #06080f;
             --bg-card: #0d1117;
@@ -59,6 +112,9 @@
         }
 
         body {
+    background: linear-gradient(180deg, #0a0e27 0%, #1e293b 100%) !important;
+    color: white !important;
+    min-height: 100vh !important;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
             color: #1e293b;
@@ -115,15 +171,8 @@
         @keyframes orbFloat3 { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(50px, -30px); } }
 
         /* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Scroll Fade-in ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.7s ease-out, transform 0.7s ease-out;
-        }
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .fade-up { opacity: 1 !important; transform: none !important; visibility: visible !important; }
+        .fade-up.visible { opacity: 1 !important; transform: none !important; }
 
         /* ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ Navbar ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ */
         .navbar {
@@ -276,6 +325,9 @@
         .terminal-dot.green { background: #10b981; }
         .terminal-title { margin-left: 12px; font-size: 0.8rem; color: var(--text-dim); font-weight: 500; }
         .terminal-body {
+    background: linear-gradient(180deg, #0a0e27 0%, #1e293b 100%) !important;
+    color: white !important;
+    min-height: 100vh !important;
             padding: 28px 24px;
             font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
             font-size: 0.85rem; line-height: 1.9;
