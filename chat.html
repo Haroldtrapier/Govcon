@@ -71,14 +71,64 @@
         const chatForm = document.getElementById('chat-input-form');
 
         const demoResponses = {
-            'govcon': "GovCon AI is an intelligent platform that monitors SAM.gov 24/7, tracking government contract opportunities across NAICS codes, FEMA programs, and State EMA contracts. We deliver real-time alerts to your Slack and email before your competitors even start searching. Plans start at $49/month with a 14-day free trial.",
+            'govcon': "GovCon AI is an intelligent platform that monitors SAM.gov 24/7, tracking government contract opportunities across NAICS codes, FEMA programs, and State EMA contracts. We deliver real-time alerts to your Slack and email before your competitors even start searching. Plans start at $97/month with a 14-day free trial.",
             'sam': "SAM.gov is the official U.S. government system for contract opportunities. We monitor it continuously and filter opportunities based on your NAICS codes, set-asides (8(a), HUBZone, SDVOSB, WOSB), and keywords. You'll get instant notifications when relevant contracts are posted.",
             'naics': "NAICS codes categorize business activities. For government contracting, choosing the right NAICS codes is crucial as contracts are often set aside for specific codes. We track 13 primary NAICS codes relevant to emergency management and government services.",
             'fema': "FEMA contracts provide opportunities for disaster response, emergency management, and recovery services. We track FEMA opportunities as well as State Emergency Management Agency (EMA) contracts across all 50 states.",
-            'price': "We offer flexible pricing starting at $49/month for basic monitoring. Enterprise plans include custom NAICS tracking, dedicated Slack channels, and priority alerts. Contact support@govconcommandcenter.com for a demo! All plans include a 14-day free trial.",
-            'start': "Getting started is easy! Sign up for a free 14-day trial, connect your Slack workspace, select your NAICS codes and keywords, and start receiving real-time contract alerts. No credit card required for the trial.",
+            'price': `🎯 GovCon Command Center Pricing:
+
+📦 CORE TIERS (All include 14-day free trial):
+• Starter - $97/month
+  Perfect for solo contractors and small teams. Automated pipeline tracking with weekly reports, compliance alerts, and Slack notifications.
+
+• Professional - $197/month
+  Everything in Starter plus daily proposal countdowns, email deadline reminders, and Notion dashboards. Great for growing teams.
+
+• Enterprise - $397/month
+  Complete business intelligence suite with win/loss analytics, custom reporting, and white-glove service. For established prime contractors.
+
+🚀 ADD-ONS:
+• GovCon AI Pro - $497/month
+  AI-powered SAM.gov opportunity tracking with intelligent scoring, real-time daily updates, and instant email alerts.
+
+💰 BUNDLES (Save 14-35%):
+• Contractor Essentials - $597/month (Save 14%)
+  Professional + GovCon AI Pro (Regular $694)
+
+• Emergency Response - $1,197/month (Save 20%)
+  Professional + GovCon AI Pro + FEMA Command Center (Regular $1,491)
+
+• All-Access Pass - $3,997/month (Save 35%)
+  Enterprise + All 4 Modules: GovCon AI Pro, FEMA, Gov Ops, Emergency Procurement Hub (Regular $6,185)
+
+✅ All plans include:
+• 14-day free trial (no credit card required)
+• Cancel anytime
+• Full access to features during trial
+• Email & Slack integration
+
+Contact info@trapiermanagement.com for custom enterprise pricing!`,
+            'trial': "Yes! All plans include a 14-day free trial with full access to all features. No credit card required to start. You can explore the platform, set up your NAICS codes and keywords, connect Slack or email, and see real-time contract opportunities before committing to a paid plan.",
+            'discount': `💰 Bundle Discounts Available!
+
+Save 14-35% with our bundles:
+
+✅ Contractor Essentials Bundle - Save 14%
+$597/month (Regular $694)
+Includes: Professional + GovCon AI Pro
+
+✅ Emergency Response Bundle - Save 20%
+$1,197/month (Regular $1,491)
+Includes: Professional + GovCon AI Pro + FEMA Command Center
+
+✅ All-Access Pass - Save 35%
+$3,997/month (Regular $6,185)
+Includes: Enterprise + GovCon AI Pro + FEMA Command Center + Gov Ops Center + Emergency Procurement Hub
+
+All bundles include the 14-day free trial. Bundle and save instead of buying modules separately!`,
+            'start': "Getting started is easy! Sign up for a free 14-day trial (no credit card required), connect your Slack workspace or email, select your NAICS codes and keywords, and start receiving real-time contract alerts. Choose from Starter ($97/mo), Professional ($197/mo), or Enterprise ($397/mo) tiers.",
             'how': "We continuously monitor SAM.gov, analyze new opportunities using AI, match them to your NAICS codes and keywords, then instantly alert you via Slack and email with full opportunity details before your competitors see them.",
-            'default': "I can help you with government contracting questions! Ask me about SAM.gov opportunities, NAICS codes, FEMA contracts, pricing, or how to get started with GovCon AI."
+            'default': "I can help you with government contracting questions! Ask me about SAM.gov opportunities, NAICS codes, FEMA contracts, pricing, trial details, or how to get started with GovCon AI."
         };
 
         function getResponse(msg) {
@@ -87,8 +137,10 @@
             if (msg.includes('sam')) return demoResponses.sam;
             if (msg.includes('naics')) return demoResponses.naics;
             if (msg.includes('fema')) return demoResponses.fema;
-            if (msg.includes('price') || msg.includes('cost')) return demoResponses.price;
-            if (msg.includes('start') || msg.includes('trial') || msg.includes('sign')) return demoResponses.start;
+            if (msg.includes('discount') || msg.includes('bundle') || msg.includes('save')) return demoResponses.discount;
+            if (msg.includes('trial') || msg.includes('free')) return demoResponses.trial;
+            if (msg.includes('price') || msg.includes('cost') || msg.includes('pricing') || msg.includes('plan')) return demoResponses.price;
+            if (msg.includes('start') || msg.includes('sign') || msg.includes('signup')) return demoResponses.start;
             if (msg.includes('how') || msg.includes('work')) return demoResponses.how;
             return demoResponses.default;
         }
