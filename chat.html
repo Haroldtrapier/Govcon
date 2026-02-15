@@ -82,30 +82,8 @@
         const chatForm = document.getElementById('chat-input-form');
 
         if (!chatMessages || !chatInput || !sendButton || !chatForm) {
-            console.error('Chat elements not found in DOM');
+            console.error('Chat elements not found');
             return;
-        }
-
-        // Demo responses for different topics
-        const responses = {
-            'govcon': "GovCon AI is an intelligent platform that monitors SAM.gov 24/7, tracking government contract opportunities across NAICS codes, FEMA programs, and State EMA contracts. We deliver real-time alerts to your Slack and email before your competitors even start searching.",
-            'sam': "SAM.gov is the official U.S. government system for contract opportunities. We monitor it continuously and filter opportunities based on your NAICS codes, set-asides (8(a), HUBZone, SDVOSB, WOSB), and keywords. You'll get instant notifications when relevant contracts are posted.",
-            'naics': "NAICS (North American Industry Classification System) codes categorize business activities. For government contracting, choosing the right NAICS codes is crucial as contracts are often set aside for specific codes. We track 13 primary NAICS codes relevant to government contracting and emergency management.",
-            'fema': "FEMA contracts provide opportunities for disaster response, emergency management, and recovery services. We track FEMA opportunities as well as State Emergency Management Agency (EMA) contracts across all 50 states, giving you a competitive advantage.",
-            'price': "We offer flexible pricing starting at $49/month for basic monitoring, up to enterprise plans with custom NAICS tracking, dedicated Slack channels, and priority alerts. Contact us at support@govconcommandcenter.com for a demo!",
-            'start': "Getting started is easy! Sign up for a free 14-day trial, connect your Slack workspace, select your NAICS codes and keywords, and start receiving real-time contract alerts. No credit card required for the trial.",
-            'default': "That's a great question! GovCon AI specializes in government contract intelligence. We can help you with SAM.gov opportunities, NAICS codes, FEMA contracts, proposal strategies, and more. What specific area would you like to know about?"
-        };
-
-        function getResponse(userMessage) {
-            const msg = userMessage.toLowerCase();
-            if (msg.includes('govcon') || msg.includes('what is') || msg.includes('about')) return responses.govcon;
-            if (msg.includes('sam.gov') || msg.includes('sam ')) return responses.sam;
-            if (msg.includes('naics')) return responses.naics;
-            if (msg.includes('fema')) return responses.fema;
-            if (msg.includes('price') || msg.includes('cost') || msg.includes('pricing')) return responses.price;
-            if (msg.includes('start') || msg.includes('sign up') || msg.includes('trial')) return responses.start;
-            return responses.default;
         }
 
         chatForm.addEventListener('submit', async function(e) {
@@ -113,7 +91,7 @@
             await sendMessage();
         });
 
-                async function sendMessage() {
+        async function sendMessage() {
             const userMessage = chatInput.value.trim();
             if (!userMessage) return;
 
@@ -123,11 +101,10 @@
             addLoadingMessage();
 
             try {
-                // Call the real API endpoint
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         message: userMessage
@@ -137,7 +114,7 @@
                 removeLoadingMessage();
 
                 if (!response.ok) {
-                    throw new Error(`API error: ${response.status}`);
+                    throw new Error('API error: ' + response.status);
                 }
 
                 const data = await response.json();
@@ -146,20 +123,16 @@
             } catch (error) {
                 removeLoadingMessage();
                 console.error('Chat error:', error);
-                addMessage('assistant', "I'm having trouble connecting to the AI service. Please try again or contact support@govconcommandcenter.com");
+                addMessage('assistant', "I'm having trouble connecting. Please try again or contact support@govconcommandcenter.com");
             } finally {
                 sendButton.disabled = false;
                 chatInput.focus();
             }
-        }, 800);
         }
 
-        let messages = [];
-
         function addMessage(role, content) {
-            messages.push({ role, content });
             const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${role}`;
+            messageDiv.className = 'message ' + role;
             const avatar = document.createElement('div');
             avatar.className = 'message-avatar';
             avatar.textContent = role === 'user' ? '👤' : '🤖';
