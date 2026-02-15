@@ -1,10 +1,11 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { Client } = require('@notionhq/client');
-const axios = require('axios');
+const { WebClient } = require('@slack/web-api');
 
 const notion = new Client({ auth: process.env.NOTION_API_KEY });
+const slack = new WebClient(process.env.SLACK_BOT_TOKEN);
 const DATABASE_ID = '30804926-7278-8126-9c82-fc859f80c7c4';
-const SLACK_WEBHOOK_URL = process.env.SLACK_WEBHOOK_URL; // Optional: for Slack notifications
+const SLACK_CHANNEL = 'C0AF1KYV61L'; // trial-notifications channel
 
 // Helper to calculate days remaining
 function getDaysRemaining(trialEnd) {
@@ -14,15 +15,20 @@ function getDaysRemaining(trialEnd) {
   return diff > 0 ? diff : 0;
 }
 
-// Helper to send Slack notification
+// Helper to send Slack notification using API
 async function sendSlackNotification(message) {
-  if (!SLACK_WEBHOOK_URL) return;
+  if (!process.env.SLACK_BOT_TOKEN) {
+    console.log('Slack notifications disabled: SLACK_BOT_TOKEN not set');
+    return;
+  }
   
   try {
-    await axios.post(SLACK_WEBHOOK_URL, {
+    await slack.chat.postMessage({
+      channel: SLACK_CHANNEL,
       text: message,
       mrkdwn: true
     });
+    console.log('Slack notification sent successfully');
   } catch (error) {
     console.error('Slack notification error:', error.message);
   }
@@ -103,7 +109,7 @@ async function upsertTrialToNotion(customer, subscription) {
       });
     }
 
-    return { success: true, status, planName, customer: customer.email };
+    return { success: true, status, planName, customer: customer.email, amount };
   } catch (error) {
     console.error('Notion error:', error);
     return { success: false, error: error.message };
@@ -155,6 +161,7 @@ module.exports = async (req, res) => {
               `🎯 *New Trial Started!*\n` +
               `👤 Customer: ${customer.name || customer.email}\n` +
               `📦 Plan: ${result.planName}\n` +
+              `💰 Value: $${result.amount}/month\n` +
               `⏳ Days Remaining: ${daysRemaining}\n` +
               `📊 <https://www.notion.so/Trial-Conversion-Tracker-3080492672788189be45fb7c792c063b|View Dashboard>`
             );
@@ -183,12 +190,14 @@ module.exports = async (req, res) => {
         const daysRemaining = getDaysRemaining(subscription.trial_end);
 
         // Update with days remaining
-        await upsertTrialToNotion(customer, subscription);
+        const result = await upsertTrialToNotion(customer, subscription);
 
         // Send Slack notification (trial ending soon)
         await sendSlackNotification(
           `⚠️ *Trial Ending Soon!*\n` +
           `👤 Customer: ${customer.name || customer.email}\n` +
+          `📦 Plan: ${result.planName}\n` +
+          `💰 Value: $${result.amount}/month\n` +
           `⏳ Days Remaining: ${daysRemaining}\n` +
           `💡 Consider reaching out!\n` +
           `📊 <https://www.notion.so/Trial-Conversion-Tracker-3080492672788189be45fb7c792c063b|View Dashboard>`
