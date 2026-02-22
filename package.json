@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "dependencies": {
+    "openai": "^4.82.0",
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
+}

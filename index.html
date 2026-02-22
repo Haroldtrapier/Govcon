@@ -1181,9 +1181,9 @@
                 </div>
                 <div class="footer-col">
                     <h4>Legal</h4>
-                    <a href="/privacy">Privacy Policy</a>
-                    <a href="/terms">Terms of Service</a>
-                    <a href="/acceptable-use">Acceptable Use</a>
+                    <a href="/privacy.html">Privacy Policy</a>
+                    <a href="/terms.html">Terms of Service</a>
+                    <a href="/acceptable-use.html">Acceptable Use</a>
                 </div>
             </div>
             <div class="footer-bottom">
@@ -1230,6 +1230,240 @@
                 document.querySelector('.nav-links').classList.remove('active');
             });
         });
+    </script>
+
+    <!-- GovCon AI Chatbot Widget -->
+    <style>
+        .chat-fab {
+            position: fixed; bottom: 28px; right: 28px; z-index: 9000;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            border: none; cursor: pointer; color: white;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 24px rgba(59, 130, 246, 0.45);
+            transition: all 0.3s; font-size: 1.6rem;
+        }
+        .chat-fab:hover { transform: scale(1.08); box-shadow: 0 8px 32px rgba(59, 130, 246, 0.6); }
+        .chat-fab.open { border-radius: 14px; }
+        .chat-fab .fab-close { display: none; }
+        .chat-fab.open .fab-icon { display: none; }
+        .chat-fab.open .fab-close { display: block; }
+
+        .chat-panel {
+            position: fixed; bottom: 100px; right: 28px; z-index: 8999;
+            width: 400px; max-width: calc(100vw - 40px); height: 540px; max-height: calc(100vh - 140px);
+            background: var(--bg-card); border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg); overflow: hidden;
+            display: none; flex-direction: column;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03);
+        }
+        .chat-panel.open { display: flex; }
+        .chat-panel::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(59,130,246,0.5), transparent);
+        }
+
+        .chat-header {
+            padding: 18px 20px; display: flex; align-items: center; gap: 12px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,0.02);
+        }
+        .chat-header-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--green); box-shadow: 0 0 10px rgba(16,185,129,0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        .chat-header-title { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+        .chat-header-sub { font-size: 0.72rem; color: var(--text-dim); }
+        .chat-provider-toggle {
+            margin-left: auto; font-size: 0.68rem; padding: 4px 10px;
+            border-radius: 6px; border: 1px solid var(--border-light);
+            background: transparent; color: var(--text-dim); cursor: pointer;
+            font-family: inherit; transition: all 0.2s;
+        }
+        .chat-provider-toggle:hover { border-color: var(--accent); color: var(--accent-light); }
+
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 20px;
+            display: flex; flex-direction: column; gap: 14px;
+        }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+
+        .chat-msg {
+            max-width: 85%; padding: 12px 16px; border-radius: 14px;
+            font-size: 0.88rem; line-height: 1.6; word-wrap: break-word;
+        }
+        .chat-msg.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: white; border-bottom-right-radius: 4px;
+        }
+        .chat-msg.assistant {
+            align-self: flex-start;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            color: var(--text-secondary); border-bottom-left-radius: 4px;
+        }
+        .chat-msg.assistant ul, .chat-msg.assistant ol { margin: 8px 0 8px 18px; }
+        .chat-msg.assistant li { margin: 4px 0; }
+        .chat-msg.assistant strong { color: var(--text); }
+        .chat-msg.assistant code { background: rgba(255,255,255,0.06); padding: 2px 6px; border-radius: 4px; font-size: 0.82rem; }
+        .chat-msg.typing .dot-loader { display: inline-flex; gap: 4px; }
+        .chat-msg.typing .dot-loader span {
+            width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim);
+            animation: dotBounce 1.2s ease-in-out infinite;
+        }
+        .chat-msg.typing .dot-loader span:nth-child(2) { animation-delay: 0.15s; }
+        .chat-msg.typing .dot-loader span:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes dotBounce { 0%,80%,100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1.2); } }
+
+        .chat-input-area {
+            padding: 16px; border-top: 1px solid var(--border);
+            display: flex; gap: 10px; background: rgba(255,255,255,0.01);
+        }
+        .chat-input {
+            flex: 1; padding: 12px 16px; border: 1px solid var(--border-light);
+            border-radius: 12px; background: rgba(255,255,255,0.03);
+            color: var(--text); font-size: 0.88rem; font-family: inherit;
+            outline: none; transition: border-color 0.2s; resize: none;
+        }
+        .chat-input::placeholder { color: var(--text-dim); }
+        .chat-input:focus { border-color: var(--accent); }
+        .chat-send {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            border: none; color: white; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; font-size: 1.1rem; flex-shrink: 0;
+        }
+        .chat-send:hover { box-shadow: 0 4px 15px rgba(59,130,246,0.4); }
+        .chat-send:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @media (max-width: 480px) {
+            .chat-panel { right: 10px; bottom: 80px; width: calc(100vw - 20px); height: calc(100vh - 100px); }
+            .chat-fab { bottom: 16px; right: 16px; }
+        }
+    </style>
+
+    <button class="chat-fab" id="chatFab" aria-label="Open chat">
+        <span class="fab-icon">&#128172;</span>
+        <span class="fab-close">&#10005;</span>
+    </button>
+
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-header">
+            <span class="chat-header-dot"></span>
+            <div>
+                <div class="chat-header-title">GovCon AI Assistant</div>
+                <div class="chat-header-sub">Ask about contracts, NAICS, FEMA &amp; more</div>
+            </div>
+            <button class="chat-provider-toggle" id="providerToggle" title="Switch AI provider">GPT</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-msg assistant">Hi! I'm your GovCon AI assistant. I can help with SAM.gov opportunities, NAICS codes, FEMA contracts, proposal strategies, and more. What can I help you with?</div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Ask about government contracts..." autocomplete="off">
+            <button class="chat-send" id="chatSend" aria-label="Send">&#10148;</button>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        const fab = document.getElementById('chatFab');
+        const panel = document.getElementById('chatPanel');
+        const input = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('chatSend');
+        const msgContainer = document.getElementById('chatMessages');
+        const providerBtn = document.getElementById('providerToggle');
+        let provider = 'openai';
+        let messages = [];
+        let sending = false;
+
+        fab.addEventListener('click', () => {
+            const isOpen = panel.classList.toggle('open');
+            fab.classList.toggle('open', isOpen);
+            if (isOpen) input.focus();
+        });
+
+        providerBtn.addEventListener('click', () => {
+            provider = provider === 'openai' ? 'anthropic' : 'openai';
+            providerBtn.textContent = provider === 'openai' ? 'GPT' : 'Claude';
+        });
+
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text;
+            return d.innerHTML;
+        }
+
+        function formatResponse(text) {
+            let html = escapeHtml(text);
+            html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+            html = html.replace(/\n- /g, '\n&bull; ');
+            html = html.replace(/\n(\d+)\. /g, '\n$1. ');
+            html = html.replace(/\n/g, '<br>');
+            return html;
+        }
+
+        function addMessage(role, content, isTyping) {
+            const el = document.createElement('div');
+            el.className = 'chat-msg ' + role + (isTyping ? ' typing' : '');
+            if (isTyping) {
+                el.innerHTML = '<div class="dot-loader"><span></span><span></span><span></span></div>';
+            } else {
+                el.innerHTML = role === 'user' ? escapeHtml(content) : formatResponse(content);
+            }
+            msgContainer.appendChild(el);
+            msgContainer.scrollTop = msgContainer.scrollHeight;
+            return el;
+        }
+
+        async function sendMessage() {
+            const text = input.value.trim();
+            if (!text || sending) return;
+
+            sending = true;
+            sendBtn.disabled = true;
+            input.value = '';
+
+            addMessage('user', text);
+            messages.push({ role: 'user', content: text });
+
+            const typingEl = addMessage('assistant', '', true);
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ messages, provider }),
+                });
+                const data = await res.json();
+
+                typingEl.remove();
+
+                if (data.error) {
+                    addMessage('assistant', 'Sorry, I encountered an error: ' + data.error);
+                } else {
+                    addMessage('assistant', data.content);
+                    messages.push({ role: 'assistant', content: data.content });
+                }
+            } catch (err) {
+                typingEl.remove();
+                addMessage('assistant', 'Connection error. Please check your internet and try again.');
+            }
+
+            sending = false;
+            sendBtn.disabled = false;
+            input.focus();
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+    })();
     </script>
 
 </body>
