@@ -1,0 +1,132 @@
+name: Deploy Backend to Railway
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+      - 'Dockerfile.backend'
+      - 'railway.json'
+      - 'railway.toml'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment || 'production' }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Check Railway Token
+        run: |
+          if [ -z "${{ secrets.RAILWAY_TOKEN }}" ]; then
+            echo "Error: RAILWAY_TOKEN secret is not set"
+            echo "Please add your Railway token in GitHub Secrets"
+            echo "Get your token from: https://railway.app/account/tokens"
+            exit 1
+          fi
+          echo "Railway token is configured"
+
+      - name: Link Railway Project
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          if [ -n "${{ secrets.RAILWAY_PROJECT_ID }}" ]; then
+            railway link ${{ secrets.RAILWAY_PROJECT_ID }} --environment ${{ github.event.inputs.environment || 'production' }}
+          else
+            echo "Warning: RAILWAY_PROJECT_ID not set, using default project"
+          fi
+
+      - name: Deploy to Railway
+        id: deploy
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          echo "Deploying to Railway..."
+          railway up --detach
+          echo "Deployment initiated successfully"
+          
+          # Get the Railway domain from the service
+          echo "Fetching service domain..."
+          DOMAIN=$(railway domain 2>/dev/null || echo "")
+          if [ -n "$DOMAIN" ]; then
+            echo "RAILWAY_DOMAIN=$DOMAIN" >> $GITHUB_OUTPUT
+            echo "Detected domain: $DOMAIN"
+          elif [ -n "${{ secrets.RAILWAY_DOMAIN }}" ]; then
+            echo "RAILWAY_DOMAIN=${{ secrets.RAILWAY_DOMAIN }}" >> $GITHUB_OUTPUT
+            echo "Using configured domain: ${{ secrets.RAILWAY_DOMAIN }}"
+          else
+            echo "Warning: Could not detect Railway domain"
+            echo "RAILWAY_DOMAIN=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Wait for Deployment
+        run: |
+          echo "Waiting for deployment to complete..."
+          sleep 45
+
+      - name: Verify Deployment Health
+        if: steps.deploy.outputs.RAILWAY_DOMAIN != ''
+        run: |
+          DOMAIN="${{ steps.deploy.outputs.RAILWAY_DOMAIN }}"
+          echo "Checking health endpoint..."
+          HEALTH_URL="https://${DOMAIN}/health"
+          echo "Health URL: $HEALTH_URL"
+          
+          # Retry logic for health check
+          for i in 1 2 3 4 5; do
+            echo "Attempt $i/5..."
+            if curl -sf "$HEALTH_URL" | jq .; then
+              echo "Health check passed!"
+              exit 0
+            fi
+            echo "Health check failed, retrying in 15 seconds..."
+            sleep 15
+          done
+          
+          echo "Health check failed after 5 attempts"
+          exit 1
+
+      - name: Skip Health Check
+        if: steps.deploy.outputs.RAILWAY_DOMAIN == ''
+        run: |
+          echo "Skipping health check - no domain configured"
+          echo "Set RAILWAY_DOMAIN secret or run 'railway domain' to generate one"
+
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "=================================="
+          echo "Deployment Summary"
+          echo "=================================="
+          echo "Environment: ${{ github.event.inputs.environment || 'production' }}"
+          DOMAIN="${{ steps.deploy.outputs.RAILWAY_DOMAIN }}"
+          if [ -n "$DOMAIN" ]; then
+            echo "Domain: https://${DOMAIN}"
+            echo "Health: https://${DOMAIN}/health"
+            echo "Docs: https://${DOMAIN}/docs"
+          else
+            echo "Domain: Not configured"
+            echo "Run 'railway domain' to generate a public URL"
+          fi
+          echo "=================================="

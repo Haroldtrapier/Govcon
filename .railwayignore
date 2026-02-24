@@ -1,0 +1,24 @@
+# Ignore frontend files for backend deployment
+node_modules/
+.next/
+package.json
+package-lock.json
+tsconfig.json
+next.config.js
+tailwind.config.js
+postcss.config.js
+pages/
+components/
+app/
+styles/
+__tests__/
+public/
+.vercel/
+.env.local
+.env.production*
+
+# Ignore root Python files (backend is in /backend folder)
+index.py
+streamlit_app.py
+requirements.txt
+api/
