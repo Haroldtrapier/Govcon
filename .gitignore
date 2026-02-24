@@ -229,3 +229,6 @@ Downloads/
 .env
 .env.*
 .env.vercel
+.env.production
+.env.production.*
+env.railway.example

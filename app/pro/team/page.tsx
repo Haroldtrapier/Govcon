@@ -19,6 +19,12 @@ export default function ProTeamPage() {
   const [loading, setLoading] = useState(true);
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [activeTab, setActiveTab] = useState<"members" | "activity" | "settings">("members");
+  const [teamSettings, setTeamSettings] = useState<Record<string, boolean>>({
+    'Require review before submission': false,
+    'Auto-assign proposals': false,
+    'Share opportunity watchlist': true,
+    'Enable real-time collaboration': true,
+  });
 
   useEffect(() => {
     const init = async () => {
@@ -132,9 +138,12 @@ export default function ProTeamPage() {
                 <p className="text-sm font-medium">{setting.label}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{setting.desc}</p>
               </div>
-              <div className="w-11 h-6 bg-slate-700 rounded-full relative cursor-pointer">
-                <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full" />
-              </div>
+              <button
+                onClick={() => setTeamSettings(prev => ({ ...prev, [setting.label]: !prev[setting.label] }))}
+                className={`w-11 h-6 rounded-full relative transition-colors ${teamSettings[setting.label] ? 'bg-emerald-600' : 'bg-slate-700'}`}
+              >
+                <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full transition-transform ${teamSettings[setting.label] ? 'left-[22px]' : 'left-0.5'}`} />
+              </button>
             </div>
           ))}
         </div>
