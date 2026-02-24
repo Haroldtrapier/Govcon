@@ -12,7 +12,7 @@ interface GrantSearchParams {
   limit?: number;
 }
 
-const GRANTS_DATABASE = [
+const FALLBACK_GRANTS = [
   {
     id: 'GRANT-2026-001',
     title: 'Small Business Innovation Research (SBIR) Phase I',
@@ -119,50 +119,129 @@ const GRANTS_DATABASE = [
   },
 ];
 
+async function searchGrantsGov(params: GrantSearchParams) {
+  const apiKey = process.env.GRANTS_GOV_API_KEY || process.env.SAM_GOV_API_KEY;
+
+  if (!apiKey) {
+    return null;
+  }
+
+  try {
+    const searchPayload: any = {
+      keyword: params.query || '',
+      oppStatuses: params.status === 'all' || !params.status ? 'forecasted,posted' : params.status,
+      rows: params.limit || 25,
+      startRecordNum: ((params.page || 1) - 1) * (params.limit || 25),
+    };
+
+    if (params.agency && params.agency !== 'All Agencies') {
+      searchPayload.agency = params.agency;
+    }
+
+    if (params.category && params.category !== 'All Categories') {
+      searchPayload.fundingCategories = params.category;
+    }
+
+    const response = await fetch('https://api.grants.gov/v1/api/search2', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': apiKey,
+      },
+      body: JSON.stringify(searchPayload),
+      signal: AbortSignal.timeout(10000),
+    });
+
+    if (!response.ok) {
+      console.error('[Grants.gov] API error:', response.status);
+      return null;
+    }
+
+    const data = await response.json();
+    const opportunities = data.oppHits || data.opportunities || [];
+
+    return opportunities.map((opp: any, i: number) => ({
+      id: opp.id || opp.oppNumber || `GG-${i}`,
+      title: opp.title || opp.oppTitle || 'Untitled Grant',
+      agency: opp.agency || opp.agencyName || 'Unknown Agency',
+      fundingAmount: opp.awardCeiling
+        ? `$${Number(opp.awardFloor || 0).toLocaleString()} - $${Number(opp.awardCeiling).toLocaleString()}`
+        : 'See solicitation',
+      deadline: opp.closeDate || opp.deadline || 'See solicitation',
+      category: opp.fundingCategory || opp.category || 'General',
+      eligibility: opp.eligibleApplicants || 'See solicitation',
+      status: opp.oppStatus === 'posted' ? 'Open' : opp.oppStatus || 'Open',
+      cfda: opp.cfdaNumber || opp.cfda || '',
+      matchRequired: opp.costSharing === 'Yes',
+      description: opp.synopsis || opp.description || '',
+    }));
+  } catch (error) {
+    console.error('[Grants.gov] Search failed:', error);
+    return null;
+  }
+}
+
+function filterLocalGrants(params: GrantSearchParams) {
+  let results = [...FALLBACK_GRANTS];
+  const { query, category, agency, status } = params;
+
+  if (query) {
+    const q = query.toLowerCase();
+    results = results.filter(
+      (g) =>
+        g.title.toLowerCase().includes(q) ||
+        g.description.toLowerCase().includes(q) ||
+        g.agency.toLowerCase().includes(q) ||
+        g.cfda.includes(q)
+    );
+  }
+
+  if (category && category !== 'All Categories') {
+    results = results.filter((g) => g.category === category);
+  }
+
+  if (agency && agency !== 'All Agencies') {
+    results = results.filter((g) => g.agency.includes(agency));
+  }
+
+  if (status && status !== 'all') {
+    results = results.filter((g) => g.status.toLowerCase() === status.toLowerCase());
+  }
+
+  return results;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: GrantSearchParams = await request.json();
-    const { query, category, agency, status, page = 1, limit = 20 } = body;
+    const { page = 1, limit = 20 } = body;
 
-    let results = [...GRANTS_DATABASE];
+    const liveResults = await searchGrantsGov(body);
 
-    if (query) {
-      const q = query.toLowerCase();
-      results = results.filter(
-        (g) =>
-          g.title.toLowerCase().includes(q) ||
-          g.description.toLowerCase().includes(q) ||
-          g.agency.toLowerCase().includes(q) ||
-          g.cfda.includes(q)
-      );
+    if (liveResults && liveResults.length > 0) {
+      return NextResponse.json({
+        grants: liveResults.slice(0, limit),
+        total: liveResults.length,
+        page,
+        totalPages: Math.ceil(liveResults.length / limit),
+        source: 'grants.gov',
+      });
     }
 
-    if (category && category !== 'All Categories') {
-      results = results.filter((g) => g.category === category);
-    }
-
-    if (agency && agency !== 'All Agencies') {
-      results = results.filter((g) => g.agency.includes(agency));
-    }
-
-    if (status && status !== 'all') {
-      results = results.filter((g) => g.status.toLowerCase() === status.toLowerCase());
-    }
-
-    const total = results.length;
+    const localResults = filterLocalGrants(body);
     const start = (page - 1) * limit;
-    const paginatedResults = results.slice(start, start + limit);
 
     return NextResponse.json({
-      grants: paginatedResults,
-      total,
+      grants: localResults.slice(start, start + limit),
+      total: localResults.length,
       page,
-      totalPages: Math.ceil(total / limit),
+      totalPages: Math.ceil(localResults.length / limit),
+      source: 'local',
     });
   } catch (error) {
     console.error('[Grants Search] Error:', error);
     return NextResponse.json(
-      { error: 'Failed to search grants' },
+      { error: 'Failed to search grants', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -174,24 +253,21 @@ export async function GET(request: NextRequest) {
   const category = searchParams.get('category') || '';
   const limit = parseInt(searchParams.get('limit') || '20');
 
-  let results = [...GRANTS_DATABASE];
+  const params: GrantSearchParams = { query, category, limit };
+  const liveResults = await searchGrantsGov(params);
 
-  if (query) {
-    const q = query.toLowerCase();
-    results = results.filter(
-      (g) =>
-        g.title.toLowerCase().includes(q) ||
-        g.description.toLowerCase().includes(q) ||
-        g.cfda.includes(q)
-    );
+  if (liveResults && liveResults.length > 0) {
+    return NextResponse.json({
+      grants: liveResults.slice(0, limit),
+      total: liveResults.length,
+      source: 'grants.gov',
+    });
   }
 
-  if (category) {
-    results = results.filter((g) => g.category === category);
-  }
-
+  const localResults = filterLocalGrants(params);
   return NextResponse.json({
-    grants: results.slice(0, limit),
-    total: results.length,
+    grants: localResults.slice(0, limit),
+    total: localResults.length,
+    source: 'local',
   });
 }

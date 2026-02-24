@@ -11,15 +11,20 @@ export async function GET(request: NextRequest) {
   try {
     const response = await fetch(`${BACKEND_URL}/api/notifications/unread-count`, {
       headers: { Authorization: authHeader },
+      signal: AbortSignal.timeout(5000),
     });
 
     if (!response.ok) {
+      console.warn('[Notifications] Backend returned', response.status);
       return NextResponse.json({ count: 0, unread_count: 0 });
     }
 
     const data = await response.json();
     return NextResponse.json({ count: data.unread_count || 0, unread_count: data.unread_count || 0 });
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && error.name !== 'AbortError') {
+      console.warn('[Notifications] Backend unreachable, returning 0 count');
+    }
     return NextResponse.json({ count: 0, unread_count: 0 });
   }
 }
