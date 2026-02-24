@@ -4,7 +4,7 @@ Uses the shared LLM service (Claude preferred, OpenAI fallback).
 """
 import json
 import asyncio
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 from datetime import datetime
 
 try:
@@ -31,7 +31,7 @@ If you're unsure about something, say so rather than guessing."""
 
 class ChatSessionManager:
     def __init__(self):
-        self.active_connections: Dict[int, "WebSocket"] = {}
+        self.active_connections: Dict[int, Any] = {}
         self.session_histories: Dict[int, list] = {}
 
     async def connect(self, websocket, user_id: Optional[str] = None):
