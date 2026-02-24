@@ -100,7 +100,7 @@ export default function AIChat() {
             className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
-              className={`max-w[75%] rounded-2xl px-5 py-3 ${
+              className={`max-w-[75%] rounded-2xl px-5 py-3 ${
 
                 message.role === 'user'
                   ? 'bg-blue-600 text-white'
