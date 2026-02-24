@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+}
 
 // Prospect targeting criteria for GovCon Command Center
 const PROSPECT_CRITERIA = {
@@ -118,7 +118,7 @@ Topic: ${hook || 'Understanding 8(a) Set-Aside Contracts'}`,
 - 5-7 hashtags
 - Max 1000 characters
 
-Question: ${hook || 'What's the biggest challenge you face with government contracting?'}`
+Question: ${hook || "What's the biggest challenge you face with government contracting?"}`
   };
 
   const systemPrompt = `You are a LinkedIn marketing expert for GovCon Command Center - a SaaS platform that helps small businesses win government contracts.
@@ -128,7 +128,7 @@ Goal: Generate leads and signups through valuable, non-salesy content
 Style: Professional but approachable, data-driven, helpful
 Always include: Clear value, credibility, subtle CTA`;
 
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       { role: 'system', content: systemPrompt },
@@ -171,7 +171,7 @@ Each post should:
 
 Return as JSON array of objects with: { day, contentType, post, hashtags }`;
 
-  const completion = await openai.chat.completions.create({
+  const completion = await getOpenAI().chat.completions.create({
     model: 'gpt-4o',
     messages: [
       { role: 'system', content: systemPrompt },

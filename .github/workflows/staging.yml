@@ -1,0 +1,29 @@
+name: Staging Deployment
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: ${{ vars.VERCEL_TOKEN != '' || secrets.VERCEL_TOKEN != '' }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Deploy to Vercel (Staging)
+      if: env.VERCEL_TOKEN != ''
+      uses: amondnet/vercel-action@v25
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+    - name: Skip notice
+      if: env.VERCEL_TOKEN == ''
+      run: echo "Skipping staging deploy - VERCEL_TOKEN not configured"
+      env:
+        VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
