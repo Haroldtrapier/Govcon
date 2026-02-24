@@ -72,75 +72,37 @@
 
         const demoResponses = {
             'govcon': "GovCon AI is an intelligent platform that monitors SAM.gov 24/7, tracking government contract opportunities across NAICS codes, FEMA programs, and State EMA contracts. We deliver real-time alerts to your Slack and email before your competitors even start searching. Plans start at $97/month with a 14-day free trial.",
-            'sam': "SAM.gov is the official U.S. government system for contract opportunities. We monitor it continuously and filter opportunities based on your NAICS codes, set-asides (8(a), HUBZone, SDVOSB, WOSB), and keywords. You'll get instant notifications when relevant contracts are posted.",
-            'naics': "NAICS codes categorize business activities. For government contracting, choosing the right NAICS codes is crucial as contracts are often set aside for specific codes. We track 13 primary NAICS codes relevant to emergency management and government services.",
-            'fema': "FEMA contracts provide opportunities for disaster response, emergency management, and recovery services. We track FEMA opportunities as well as State Emergency Management Agency (EMA) contracts across all 50 states.",
-            'price': `🎯 GovCon Command Center Pricing:
-
-📦 CORE TIERS (All include 14-day free trial):
-• Starter - $97/month
-  Perfect for solo contractors and small teams. Automated pipeline tracking with weekly reports, compliance alerts, and Slack notifications.
-
-• Professional - $197/month
-  Everything in Starter plus daily proposal countdowns, email deadline reminders, and Notion dashboards. Great for growing teams.
-
-• Enterprise - $397/month
-  Complete business intelligence suite with win/loss analytics, custom reporting, and white-glove service. For established prime contractors.
-
-🚀 ADD-ONS:
-• GovCon AI Pro - $497/month
-  AI-powered SAM.gov opportunity tracking with intelligent scoring, real-time daily updates, and instant email alerts.
-
-💰 BUNDLES (Save 14-35%):
-• Contractor Essentials - $597/month (Save 14%)
-  Professional + GovCon AI Pro (Regular $694)
-
-• Emergency Response - $1,197/month (Save 20%)
-  Professional + GovCon AI Pro + FEMA Command Center (Regular $1,491)
-
-• All-Access Pass - $3,997/month (Save 35%)
-  Enterprise + All 4 Modules: GovCon AI Pro, FEMA, Gov Ops, Emergency Procurement Hub (Regular $6,185)
-
-✅ All plans include:
-• 14-day free trial (credit card required, but no charge for 14 days)
-• Cancel anytime
-• Full access to features during trial
-• Email & Slack integration
-
-Contact info@trapiermanagement.com for custom enterprise pricing!`,
-            'trial': "Yes! All plans include a 14-day free trial with full access to all features. Credit card required to start the trial, but you won't be charged until after the 14 days. You can explore the platform, set up your NAICS codes and keywords, connect Slack or email, and see real-time contract opportunities before committing to a paid plan.",
-            'discount': `💰 Bundle Discounts Available!
-
-Save 14-35% with our bundles:
-
-✅ Contractor Essentials Bundle - Save 14%
-$597/month (Regular $694)
-Includes: Professional + GovCon AI Pro
-
-✅ Emergency Response Bundle - Save 20%
-$1,197/month (Regular $1,491)
-Includes: Professional + GovCon AI Pro + FEMA Command Center
-
-✅ All-Access Pass - Save 35%
-$3,997/month (Regular $6,185)
-Includes: Enterprise + GovCon AI Pro + FEMA Command Center + Gov Ops Center + Emergency Procurement Hub
-
-All bundles include the 14-day free trial (credit card required, no charge for 14 days). Bundle and save instead of buying modules separately!`,
-            'start': "Getting started is easy! Sign up for a free 14-day trial (credit card required to activate), connect your Slack workspace or email, select your NAICS codes and keywords, and start receiving real-time contract alerts. Choose from Starter ($97/mo), Professional ($197/mo), or Enterprise ($397/mo) tiers.",
-            'how': "We continuously monitor SAM.gov, analyze new opportunities using AI, match them to your NAICS codes and keywords, then instantly alert you via Slack and email with full opportunity details before your competitors see them.",
-            'default': "I can help you with government contracting questions! Ask me about SAM.gov opportunities, NAICS codes, FEMA contracts, pricing, trial details, or how to get started with GovCon AI."
+            'sam': "We monitor SAM.gov continuously so you don't have to. Our AI scans every new posting, matches opportunities to your NAICS codes and set-aside categories (8(a), HUBZone, SDVOSB, WOSB), and sends you instant Slack and email alerts with full details. Start a 14-day free trial to see live opportunities in your area right now.",
+            'naics': "NAICS codes are critical for government contracting — contracts are often set aside for specific codes. We track 13+ primary NAICS codes and can help you identify which ones fit your business. Tell me your industry (IT, cybersecurity, construction, consulting, etc.) and I'll share the relevant NAICS codes and current opportunity volume.",
+            'fema': "FEMA contracts are a major opportunity area — disaster response, emergency management, debris removal, temporary housing, and recovery services. We track FEMA opportunities AND State Emergency Management Agency (EMA) contracts across all 50 states. Our platform alerts you to emergency procurements the moment they're posted — speed matters in this space. Start a free trial to see current FEMA opportunities.",
+            'cyber': "Cybersecurity is one of the largest federal contracting sectors, with billions in annual spending. Key agencies include DoD, DHS, VA, and the Intelligence Community.\n\nRelevant NAICS codes:\n• 541512 — Computer Systems Design\n• 541519 — Other Computer Related Services\n• 541690 — Scientific & Technical Consulting\n• 561621 — Security Systems Services\n\nCommon contract types include FISMA compliance, SOC operations, penetration testing, zero-trust architecture, and cloud security. Many are set aside for small businesses.\n\nGovCon AI tracks these automatically — start a 14-day free trial to see current cybersecurity opportunities delivered to your Slack and inbox.",
+            'it': "Federal IT spending exceeds $100B annually, making it the largest contracting sector. Key NAICS codes:\n\n• 541511 — Custom Computer Programming\n• 541512 — Computer Systems Design\n• 541513 — Computer Facilities Management\n• 541519 — Other Computer Related Services\n• 518210 — Cloud Computing & Data Processing\n\nMajor contract vehicles include Alliant 2, SEWP V, CIO-SP3, and GSA IT Schedule 70. We track all of these and deliver matches to you in real-time. Start a free trial to see current IT opportunities.",
+            'construction': "Federal construction is a massive market. The Army Corps of Engineers, GSA, and VA are the biggest buyers.\n\nKey NAICS codes:\n• 236220 — Commercial Building Construction\n• 237310 — Highway & Street Construction\n• 238220 — Plumbing, Heating & AC\n\nMany contracts are set aside for small businesses, 8(a), HUBZone, and SDVOSB firms. GovCon AI monitors all new construction solicitations and alerts you instantly. Start a 14-day free trial to see live opportunities.",
+            'price': "GovCon Command Center Pricing:\n\nCORE TIERS (All include 14-day free trial):\n• Starter — $97/month: Automated pipeline tracking, weekly reports, Slack notifications\n• Professional — $197/month: Daily proposal countdowns, email reminders, Notion dashboards\n• Enterprise — $397/month: Win/loss analytics, custom reporting, white-glove service\n\nADD-ONS:\n• GovCon AI Pro — $497/month: AI-powered SAM.gov tracking with intelligent scoring\n\nBUNDLES (Save 14-35%):\n• Contractor Essentials — $597/month (Save 14%)\n• Emergency Response — $1,197/month (Save 20%)\n• All-Access Pass — $3,997/month (Save 35%)\n\nAll plans include 14-day free trial, cancel anytime. Contact info@trapiermanagement.com for custom enterprise pricing.",
+            'trial': "All plans include a 14-day free trial with full access to every feature. You'll be able to set up your NAICS codes and keywords, connect Slack or email, and start receiving real-time contract alerts immediately. No charge for the first 14 days — you can explore the full platform and see live opportunities before committing.",
+            'discount': "Bundle Discounts Available!\n\n• Contractor Essentials — $597/month (Save 14%): Professional + GovCon AI Pro\n• Emergency Response — $1,197/month (Save 20%): Professional + GovCon AI Pro + FEMA Command Center\n• All-Access Pass — $3,997/month (Save 35%): Enterprise + All 4 Modules\n\nAll bundles include the 14-day free trial. Bundle and save instead of buying modules separately!",
+            'start': "Getting started takes about 2 minutes: sign up for a free 14-day trial, connect your Slack workspace or email, select your NAICS codes and keywords, and start receiving real-time contract alerts immediately. Choose from Starter ($97/mo), Professional ($197/mo), or Enterprise ($397/mo).",
+            'how': "Our AI continuously monitors SAM.gov, FEMA, and State EMA portals. When a new opportunity is posted, we instantly analyze it against your NAICS codes, keywords, and set-aside categories. Matching opportunities are scored, prioritized, and delivered directly to your Slack channel and inbox — often before your competitors even know they exist.",
+            'proposal': "Winning government contracts requires strong proposals. Key elements:\n\n• Technical approach that directly addresses the SOW\n• Past performance references with specific metrics\n• Compliant pricing structure\n• Clear management approach\n\nGovCon AI helps by giving you early notice of opportunities so you have maximum time to prepare. Our Professional tier ($197/mo) includes proposal deadline countdowns and daily reminders. Start a free trial to get ahead of the competition.",
+            'small': "Small business set-asides are a huge advantage in government contracting. The government targets 23% of contracts to small businesses.\n\nKey set-aside categories:\n• 8(a) Business Development — for disadvantaged small businesses\n• HUBZone — businesses in historically underutilized areas\n• SDVOSB — service-disabled veteran-owned\n• WOSB/EDWOSB — women-owned small businesses\n\nGovCon AI filters opportunities by set-aside type so you only see contracts you qualify for. Start a free trial to see what's available for your category.",
+            'default': "I can help with any government contracting question! I specialize in:\n\n• Finding contracts in your industry (IT, cybersecurity, construction, etc.)\n• NAICS codes and set-aside categories\n• FEMA and emergency management opportunities\n• Pricing and getting started with GovCon AI\n• Proposal strategies and compliance\n\nWhat area are you interested in?"
         };
 
         function getResponse(msg) {
             msg = msg.toLowerCase();
-            if (msg.includes('govcon') || msg.includes('what is')) return demoResponses.govcon;
-            if (msg.includes('sam')) return demoResponses.sam;
+            if (msg.includes('cyber') || msg.includes('security') || msg.includes('infosec')) return demoResponses.cyber;
+            if (msg.includes('it ') || msg.includes('technology') || msg.includes('software') || msg.includes('cloud') || msg.includes('computer')) return demoResponses.it;
+            if (msg.includes('construct') || msg.includes('building') || msg.includes('engineer')) return demoResponses.construction;
+            if (msg.includes('proposal') || msg.includes('bid') || msg.includes('win')) return demoResponses.proposal;
+            if (msg.includes('small business') || msg.includes('8(a)') || msg.includes('hubzone') || msg.includes('sdvosb') || msg.includes('wosb') || msg.includes('set-aside') || msg.includes('set aside')) return demoResponses.small;
+            if (msg.includes('govcon') || msg.includes('what is') || msg.includes('what do')) return demoResponses.govcon;
+            if (msg.includes('sam.gov') || msg.includes('sam ')) return demoResponses.sam;
             if (msg.includes('naics')) return demoResponses.naics;
-            if (msg.includes('fema')) return demoResponses.fema;
+            if (msg.includes('fema') || msg.includes('emergency') || msg.includes('disaster')) return demoResponses.fema;
             if (msg.includes('discount') || msg.includes('bundle') || msg.includes('save')) return demoResponses.discount;
             if (msg.includes('trial') || msg.includes('free')) return demoResponses.trial;
-            if (msg.includes('price') || msg.includes('cost') || msg.includes('pricing') || msg.includes('plan')) return demoResponses.price;
-            if (msg.includes('start') || msg.includes('sign') || msg.includes('signup')) return demoResponses.start;
+            if (msg.includes('price') || msg.includes('cost') || msg.includes('pricing') || msg.includes('plan') || msg.includes('much')) return demoResponses.price;
+            if (msg.includes('start') || msg.includes('sign') || msg.includes('signup') || msg.includes('begin')) return demoResponses.start;
             if (msg.includes('how') || msg.includes('work')) return demoResponses.how;
             return demoResponses.default;
         }
@@ -149,6 +111,8 @@ All bundles include the 14-day free trial (credit card required, no charge for 1
             e.preventDefault();
             await sendMessage();
         });
+
+        let conversationHistory = [];
 
         async function sendMessage() {
             const userMessage = chatInput.value.trim();
@@ -159,15 +123,16 @@ All bundles include the 14-day free trial (credit card required, no charge for 1
             sendButton.disabled = true;
             addLoadingMessage();
 
-            // Silently try API, seamlessly fall back to demo
+            conversationHistory.push({ role: 'user', content: userMessage });
+
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000); // 3s timeout
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
 
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: userMessage }),
+                    body: JSON.stringify({ messages: conversationHistory }),
                     signal: controller.signal
                 });
 
@@ -176,19 +141,21 @@ All bundles include the 14-day free trial (credit card required, no charge for 1
 
                 if (response.ok) {
                     const data = await response.json();
-                    addMessage('assistant', data.content || data.message || data.response);
+                    const reply = data.content || data.message || data.response;
+                    addMessage('assistant', reply);
+                    conversationHistory.push({ role: 'assistant', content: reply });
                     sendButton.disabled = false;
                     chatInput.focus();
-                    return; // Success - exit here
+                    return;
                 }
             } catch (e) {
-                // API failed - silently continue to demo fallback
+                // API unavailable — use demo fallback
             }
 
-            // Use demo response (either API failed or wasn't available)
             removeLoadingMessage();
             const demoResponse = getResponse(userMessage);
             addMessage('assistant', demoResponse);
+            conversationHistory.push({ role: 'assistant', content: demoResponse });
             sendButton.disabled = false;
             chatInput.focus();
         }
